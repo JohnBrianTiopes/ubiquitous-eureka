@@ -1,0 +1,14 @@
+{
+  "name": "app-dev-group-3",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start-backend": "node ./server/server.js",
+    "start-frontend": "npm --prefix ./4games run dev",
+    "start": "npm run start-backend",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

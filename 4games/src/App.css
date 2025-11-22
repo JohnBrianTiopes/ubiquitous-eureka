@@ -1,42 +1,55 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+*, a{
+  margin:0;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+a{
+  color: aliceblue;
+}
+
+.ngilo-user{
+  background: #37143d;
+  background: linear-gradient(180deg, rgba(138, 42, 155, 1) 20%, rgb(92, 74, 189) 73% rgba(26, 6, 116, 0.555) 100%);
+  height: 728px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.ngilo-user h1{
+  font-size: 48px;
+  color: white;
+  margin-bottom: 10px;
+}.user-login{
+  background: rgba(255, 255, 255, 0.4 );
+  box-shadow: 0px 32px 0 rgba( 31, 38, 135, 0.37 );
+  background-attachment: blur( 12.5px );
+  backdrop-filter: blur( 12.5px );
+  border-radius: 10px;
+  width: 400px;
+  padding: 20px;
+  height: 200px;
+}
+.user-login > form{
+  display: flex;
+  flex-direction: column;  
+}
+
+.user-login > form > input{
+  width: auto;
+  border: 0px;
+  border-radius: 4px;
+  height: 26px;
+}
+.user-btn{
+  margin-top: 10px;
+  width: auto;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
+  background-color: black;
+  height: 30px;
+  color:aliceblue;
+  padding: 10px;
+} 
