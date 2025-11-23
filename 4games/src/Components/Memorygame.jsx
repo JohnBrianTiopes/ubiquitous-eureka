@@ -12,15 +12,26 @@ const cardImages = [
 ]
 
 function MemoryGame(){
+    const [cards, setCards] = useState([]);
+    const [turns, setTurns] = useState(0);
 
     // shuffle cards
     const shuffleCards = () => {
-        const shuffledCards = []
+        const shuffledCards = [...cardImages, ...cardImages]
+            .sort(() => Math.random() - 0.5)
+            .map((card) => ({ ...card, id: Math.random() }))
+        
+        setCards(shuffledCards)
+        setTurns(0)
     }
-    
+
     return (
-        <div>
-            <h2>Super Awesome Memory game to test your Super awesome memory</h2>
+        <div className = "container-card">
+            <h2>Super Awesome Memory game</h2>
+            <p>to test your Super Awesome Memory!</p>
+            <button onClick={shuffleCards}>Start Super Awesome game</button>
         </div>
     )
 }
+
+export default MemoryGame;

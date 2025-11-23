@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Auth.css';
+import MemoryGame from '../Components/Memorygame';
 
 const Home = () => {
 	const [showComponent, setShowComponent] = useState(null);
@@ -10,9 +11,9 @@ const Home = () => {
 			<h1>Welcome{user ? `, ${user.username}` : ''}!</h1>
 			<p>This is the Home page. Your frontend is running.</p>
 			<button onClick={() => setShowComponent('memorygame')}>Memory Game</button>
-			
+
 			<div>
-				{showComponent === 'memorygame' && <Memorygame />}
+				{showComponent === 'memorygame' && <MemoryGame />}
 			</div>
 		</div>
 	);
