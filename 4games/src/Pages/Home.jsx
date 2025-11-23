@@ -9,8 +9,8 @@ const Home = () => {
 		<div style={{ padding: '2rem', color: '#fff' }}>
 			<h1>Welcome{user ? `, ${user.username}` : ''}!</h1>
 			<p>This is the Home page. Your frontend is running.</p>
-			<button onClick={()=> setShowComponent('memorygame')}>Memory Game</button>
-
+			<button onClick={() => setShowComponent('memorygame')}>Memory Game</button>
+			
 			<div>
 				{showComponent === 'memorygame' && <Memorygame />}
 			</div>
