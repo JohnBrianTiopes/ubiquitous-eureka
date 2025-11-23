@@ -1,14 +1,14 @@
 import { useState } from 'react';
-
+import './Memorygame.css';
 const cardImages = [
-    {"src": "../images/01.jpg"},
-    {"src": "../images/02.jpg"},
-    {"src": "../images/03.jpg"},
-    {"src": "../images/04.jpg"},
-    {"src": "../images/05.jpg"},
-    {"src": "../images/06.jpg"},
-    {"src": "../images/07.jpg"},
-    {"src": "../images/08.jpg"}
+    {"src": "/images/01.png"},
+    {"src": "/images/02.png"},
+    {"src": "/images/03.png"},
+    {"src": "/images/04.png"},
+    {"src": "/images/05.png"},
+    {"src": "/images/06.png"},
+    {"src": "/images/07.png"},
+    {"src": "/images/08.png"}
 ]
 
 function MemoryGame(){
@@ -30,6 +30,18 @@ function MemoryGame(){
             <h2>Super Awesome Memory game</h2>
             <p>to test your Super Awesome Memory!</p>
             <button onClick={shuffleCards}>Start Super Awesome game</button>
+
+            <div className="card-grid">
+                {cards.map(card => (
+                    <div className="card" key={card.id}>
+                        <div>
+                            <img className="front" src={card.src} alt="card front"/>
+                            <img className="back" src="/images/cover.png" alt="card back"/>
+
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }
