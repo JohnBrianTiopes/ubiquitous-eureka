@@ -1,6 +1,6 @@
+// src/components/Login.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import './Auth.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -9,7 +9,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // prevent page scroll while on auth page
     document.body.classList.add('auth-page');
     return () => document.body.classList.remove('auth-page');
   }, []);
@@ -17,7 +16,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    
 
     try {
       const response = await fetch('/api/login', {
@@ -31,10 +29,14 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify({
+          userId: data.userId,
+          username: data.username,
+          token: data.token
+        }));
         navigate('/home');
       } else {
-        setError(data.message || 'Invalid username or password');
+        setError(data || 'Invalid username or password');
       }
     } catch (err) {
       setError('Server error. Please try again later.');
