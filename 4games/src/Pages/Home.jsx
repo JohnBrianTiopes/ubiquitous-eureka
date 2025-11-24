@@ -11,11 +11,18 @@ const Home = () => {
 			<h1>Welcome{user ? `, ${user.username}` : ''}!</h1>
 			<p>This is the Home page. Your frontend is running.</p>
 			<button onClick={() => setShowComponent('memorygame')}>Memory Game</button>
+      <button onClick={() => setShowComponent('quizgame')}>Quiz Game</button>
 
 			<div>
 				{showComponent === 'memorygame' && <MemoryGame />}
 			</div>
+
+      <div>
+        {showComponent === 'quizgame' && <QuizGame />}
+      </div>
 		</div>
+
+    
 	);
 };
 
