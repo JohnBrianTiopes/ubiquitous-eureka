@@ -1,23 +1,35 @@
+// src/components/Signup.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import './Auth.css';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     try {
-      await axios.post('/api/Register', { username, password });
-      setSuccess('Signup successful! You can now log in.');
+      const response = await axios.post('/api/signup', { username, password });
+      
+      localStorage.setItem('user', JSON.stringify({
+        userId: response.data.userId,
+        username: response.data.username,
+        token: response.data.token
+      }));
+      
+      setSuccess('Signup successful! Redirecting to home...');
       setUsername('');
       setPassword('');
+      
+      setTimeout(() => {
+        navigate('/home');
+      }, 1500);
     } catch (err) {
       setError(err.response?.data || 'Signup failed. Please try again.');
     }
@@ -69,4 +81,4 @@ const Register = () => {
   );
 }
 
-export default Register;
+export default Signup;
