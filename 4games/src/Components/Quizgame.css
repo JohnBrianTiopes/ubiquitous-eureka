@@ -1,0 +1,104 @@
+/* Import retro arcade font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Game container */
+body {
+  font-family: 'Press Start 2P', cursive;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  color: #fff;
+  text-align: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem;
+}
+
+/* Headings */
+h2, h3 {
+  text-shadow: 2px 2px 4px #000;
+  margin-bottom: 1rem;
+}
+
+/* General buttons (categories, play again, back to categories) */
+button {
+  display: inline-block;
+  margin: 0.5rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 0 10px #00f, 0 0 20px #0ff;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff0, 0 0 40px #f0f;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Quiz options */
+.option {
+  display: block;
+  width: 60%;
+  margin: 0.75rem auto;
+  padding: 1rem;
+  background: #333;
+  border-radius: 10px;
+  box-shadow: 0 0 8px #0ff;
+}
+
+.option.correct {
+  background: #28a745;
+  box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+  animation: pulseGreen 0.5s;
+}
+
+.option.wrong {
+  background: #dc3545;
+  box-shadow: 0 0 15px #f00, 0 0 30px #f00;
+  animation: shake 0.4s;
+}
+
+/* Timer and score HUD */
+p {
+  font-size: 1rem;
+  margin: 0.5rem;
+}
+
+/* Leaderboard styling */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.5rem auto;
+  padding: 0.5rem;
+  width: 70%;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #0ff;
+}
+
+/* Animations */
+@keyframes pulseGreen {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Auth.css';
 import MemoryGame from '../Components/Memorygame';
+import QuizGame from '../Components/Quizgame';
 
 const Home = () => {
 	const [showComponent, setShowComponent] = useState(null);
