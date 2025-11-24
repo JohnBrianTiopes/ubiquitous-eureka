@@ -40,7 +40,7 @@ db.run(`
     if (err) console.error("Error creating messages table:", err.message);
 });
 
-app.post('/api/Register', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send('Username and password are required.');
