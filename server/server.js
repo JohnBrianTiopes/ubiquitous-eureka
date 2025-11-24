@@ -1,5 +1,6 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
@@ -12,11 +13,12 @@ const JWT_SECRET = 'your-secret-key-change-in-production'; // Add this line
 app.use(cors());
 app.use(express.json());
 
-const db = new sqlite3.Database('./ngilo.db', (err) => {
+const dbPath = path.join(__dirname, 'ngilo.db');
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error connecting to the database:', err.message);
     } else {
-        console.log('Connected to the ngilo.db database.');
+        console.log(`Connected to the database at ${dbPath}`);
     }
 });
 
@@ -39,7 +41,6 @@ db.run(`
     if (err) console.error("Error creating messages table:", err.message);
 });
 
-app.post('/api/signup', async (req, res) => {
 // Add authentication middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -53,9 +54,8 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
-});
 // Update Register endpoint
-app.post('/api/Register', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send('Username and password are required.');
@@ -193,6 +193,11 @@ app.delete('/api/messages/:messageId', authenticateToken, (req, res) => {
             res.status(200).send('Message deleted successfully.');
         }
     );
+});
+
+// Health check route for quick availability tests
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
 });
 
 app.listen(PORT, () => {
