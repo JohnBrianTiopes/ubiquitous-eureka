@@ -1,21 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Memorygame.css';
+import Card from './Card';
+
 const cardImages = [
-    {"src": "/images/01.png"},
-    {"src": "/images/02.png"},
-    {"src": "/images/03.png"},
-    {"src": "/images/04.png"},
-    {"src": "/images/05.png"},
-    {"src": "/images/06.png"},
-    {"src": "/images/07.png"},
-    {"src": "/images/08.png"}
+    {"src": "/images/01.png", matched: false},
+    {"src": "/images/02.png", matched: false},
+    {"src": "/images/03.png", matched: false},
+    {"src": "/images/04.png", matched: false},
+    {"src": "/images/05.png", matched: false},
+    {"src": "/images/06.png", matched: false},
+    {"src": "/images/07.png", matched: false},
+    {"src": "/images/08.png", matched: false}
 ]
 
 function MemoryGame(){
     const [cards, setCards] = useState([]);
     const [turns, setTurns] = useState(0);
+    const [choiceOne, setChoiceOne] = useState(null);
+    const [choiceTwo, setChoiceTwo] = useState(null);
 
-    // shuffle cards
     const shuffleCards = () => {
         const shuffledCards = [...cardImages, ...cardImages]
             .sort(() => Math.random() - 0.5)
@@ -25,22 +28,51 @@ function MemoryGame(){
         setTurns(0)
     }
 
+    const handleChoice = (card) =>{
+        choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
+    }
+
+    const resetTurn = () => {
+        setChoiceOne(null)
+        setChoiceTwo(null)
+        setTurns(prevTurns => prevTurns + 1)
+    }
+
+    useEffect(() => {
+        if (choiceOne && choiceTwo) {
+            if(choiceOne.src === choiceTwo.src) {
+                setCards(prevCards => {
+                    return prevCards.map(card => {
+                       if(card.src === choiceOne.src){
+                        return {...card, matched: true}
+                       } else {
+                        return card
+                       }
+                    })
+                })
+                resetTurn()                   
+            } else {
+                setTimeout(() => resetTurn(), 1000)
+            }
+        }
+    }, [choiceOne, choiceTwo])
+
     return (
         <div className = "container-card">
-            <h2>Super Awesome Memory game</h2>
-            <p>to test your Super Awesome Memory!</p>
-            <button onClick={shuffleCards}>Start Super Awesome game</button>
+            <h2>Super Cutesy Memory game</h2>
+            <p>to test your Super Cutesy Memory!</p>
+            <button onClick={shuffleCards}>Start Super Cutesy game</button>
 
             <div className="card-grid">
                 {cards.map(card => (
-                    <div className="card" key={card.id}>
-                        <div>
-                            <img className="front" src={card.src} alt="card front"/>
-                            <img className="back" src="/images/cover.png" alt="card back"/>
-
-                        </div>
-                    </div>
+                   <Card 
+                        key={card.id} 
+                        card={card} 
+                        handleChoice={handleChoice}
+                        flipped={card === choiceOne || card === choiceTwo || card.matched} 
+                   />
                 ))}
+                <p>Turns: {turns}</p>
             </div>
         </div>
     )
