@@ -6,6 +6,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,14 +62,23 @@ const Login = () => {
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="auth-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                className="auth-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
           <button className="auth-btn" type="submit">Log In</button>
         </form>

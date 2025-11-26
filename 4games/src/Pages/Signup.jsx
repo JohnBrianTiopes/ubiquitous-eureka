@@ -8,6 +8,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -59,15 +60,24 @@ const Signup = () => {
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="auth-input"
-              placeholder="Create a password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                className="auth-input"
+                placeholder="Create a password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(prev => !prev)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
           <button type="submit" className="auth-btn">Sign Up</button>
         </form>

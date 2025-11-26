@@ -4,6 +4,7 @@ node_modules/
 
 # Lockfiles (ignore if you prefer not to commit lockfiles)
 package-lock.json
+**/package-lock.json
 yarn.lock
 pnpm-lock.yaml
 

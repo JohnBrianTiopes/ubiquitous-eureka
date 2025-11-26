@@ -41,6 +41,19 @@ db.run(`
     if (err) console.error("Error creating messages table:", err.message);
 });
 
+// Leaderboard table for TicTacToe best streaks
+db.run(`
+    CREATE TABLE IF NOT EXISTS leaderboard (
+        user_id TEXT PRIMARY KEY,
+        username TEXT UNIQUE,
+        best_streak INTEGER DEFAULT 0,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    )
+`, (err) => {
+    if (err) console.error("Error creating leaderboard table:", err.message);
+});
+
 // Add authentication middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -172,6 +185,50 @@ app.get('/api/messages/:userId', authenticateToken, (req, res) => {
             }
             res.status(200).json(rows);
         }
+    );
+});
+
+// Update a user's best TicTacToe streak (upsert)
+app.post('/api/leaderboard/update', authenticateToken, (req, res) => {
+    const { bestStreak } = req.body;
+    if (typeof bestStreak !== 'number' || bestStreak < 0) {
+        return res.status(400).send('bestStreak must be a non-negative number.');
+    }
+
+    const { userId, username } = req.user;
+
+    const sql = `
+        INSERT INTO leaderboard (user_id, username, best_streak)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+            best_streak = CASE WHEN excluded.best_streak > leaderboard.best_streak THEN excluded.best_streak ELSE leaderboard.best_streak END,
+            updated_at = CURRENT_TIMESTAMP
+    `;
+
+    db.run(sql, [userId, username, bestStreak], function (err) {
+        if (err) {
+            console.error('Error updating leaderboard:', err.message);
+            return res.status(500).send('Failed to update leaderboard.');
+        }
+        return res.status(200).json({ success: true });
+    });
+});
+
+// Get top leaderboard entries (top 5 best streaks)
+app.get('/api/leaderboard', (req, res) => {
+    db.all(
+        `SELECT username, best_streak AS bestStreak
+         FROM leaderboard
+         ORDER BY best_streak DESC, updated_at ASC
+         LIMIT 5`,
+        [],
+        (err, rows) => {
+            if (err) {
+                console.error('Error fetching leaderboard:', err.message);
+                return res.status(500).send('Failed to fetch leaderboard.');
+            }
+            return res.status(200).json(rows);
+        },
     );
 });
 
