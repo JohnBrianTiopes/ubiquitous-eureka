@@ -40,7 +40,7 @@ db.run(`
     if (err) console.error("Error creating messages table:", err.message);
 });
 
-app.post('/api/Register', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send('Username and password are required.');
@@ -77,18 +77,18 @@ app.post('/api/login', (req, res) => {
     db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Server error.');
+            return res.status(500).json('Server error.');
         }
         if (!user) {
-            return res.status(400).send('Invalid username or password.');
+            return res.status(400).json('Invalid username or password.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send('Invalid username or password.');
+            return res.status(400).json('Invalid username or password.');
         }
 
-        res.status(200).send({ userId: user.user_id, username: user.username });
+        res.status(200).json({ userId: user.user_id, username: user.username });
     });
 });
 

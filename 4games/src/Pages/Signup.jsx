@@ -14,7 +14,7 @@ const Register = () => {
     setError('');
     setSuccess('');
     try {
-      await axios.post('/api/Register', { username, password });
+      await axios.post('/api/Signup', { username, password });
       setSuccess('Signup successful! You can now log in.');
       setUsername('');
       setPassword('');
