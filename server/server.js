@@ -1,21 +1,24 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+const jwt = require('jsonwebtoken'); // Add this line
 
 const app = express();
 const PORT = 5000;
+const JWT_SECRET = 'your-secret-key-change-in-production'; // Add this line
 
 app.use(cors());
 app.use(express.json());
 
-
-const db = new sqlite3.Database('./ngilo.db', (err) => {
+const dbPath = path.join(__dirname, 'ngilo.db');
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error ('Error connecting to the database:', err.message);
+        console.error('Error connecting to the database:', err.message);
     } else {
-        console.log('Connected to the ngilo.db database.');
+        console.log(`Connected to the database at ${dbPath}`);
     }
 });
 
@@ -23,8 +26,7 @@ db.run(` CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
     username TEXT UNIQUE,
     password TEXT
-    )
-    `, (err) => {
+    )`, (err) => {
     if (err) console.error("Error creating users table:", err.message);
 });
 
@@ -35,11 +37,24 @@ db.run(`
     message TEXT,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (recipient_id) REFERENCES users(user_id)
-    )
-    `, (err) => {
+    )`, (err) => {
     if (err) console.error("Error creating messages table:", err.message);
 });
 
+// Add authentication middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) return res.sendStatus(401);
+    
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+// Update Register endpoint
 app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -58,7 +73,9 @@ app.post('/api/signup', async (req, res) => {
                     console.error(err.message);
                     return res.status(400).send('Username already exists.');
                 }
-                res.status(200).send({ userId, username });
+                // Create token for new user
+                const token = jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: '1h' });
+                res.status(200).send({ userId, username, token });
             }
         );
     } catch (error) {
@@ -67,7 +84,7 @@ app.post('/api/signup', async (req, res) => {
     }
 });
 
-
+// Update Login endpoint
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -88,12 +105,14 @@ app.post('/api/login', (req, res) => {
             return res.status(400).json('Invalid username or password.');
         }
 
-        res.status(200).json({ userId: user.user_id, username: user.username });
+        // Create and return token
+        const token = jwt.sign({ userId: user.user_id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).send({ userId: user.user_id, username: user.username, token });
     });
 });
 
-
-app.get('/api/user/:userId', (req, res) => {
+// Protect this route with authentication middleware
+app.get('/api/user/:userId', authenticateToken, (req, res) => {
     const { userId } = req.params;
 
     db.get(`SELECT username FROM users WHERE user_id = ?`, [userId], (err, row) => {
@@ -104,12 +123,12 @@ app.get('/api/user/:userId', (req, res) => {
         if (!row) {
             return res.status(404).send('User not found');
         }
-        res.status(200).json({ username: row. username });
+        res.status(200).json({ username: row.username });
     });
 });
 
-
-app.post('/api/send-message', (req, res) => {
+// Protect this route
+app.post('/api/send-message', authenticateToken, (req, res) => {
     const { recipientId, message } = req.body;
 
     if (!recipientId || !message) {
@@ -133,14 +152,14 @@ app.post('/api/send-message', (req, res) => {
                     console.error(err.message);
                     return res.status(500).send('Failed to send message.');
                 }
-                res.status(200).send('Message sent succesfully.');
+                res.status(200).send('Message sent successfully.');
             }
         );
     });
 });
 
-
-app.get('/api/messages/:userId', (req, res) => {
+// Protect this route
+app.get('/api/messages/:userId', authenticateToken, (req, res) => {
     const { userId } = req.params;
 
     db.all(
@@ -156,8 +175,8 @@ app.get('/api/messages/:userId', (req, res) => {
     );
 });
 
-
-app.delete('/api/messages/:messageId', (req, res) => {
+// Protect this route
+app.delete('/api/messages/:messageId', authenticateToken, (req, res) => {
     const { messageId } = req.params;
 
     db.run(
@@ -176,6 +195,10 @@ app.delete('/api/messages/:messageId', (req, res) => {
     );
 });
 
+// Health check route for quick availability tests
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
