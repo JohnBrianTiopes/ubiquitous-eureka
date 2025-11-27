@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-//Rockpaperscissor ang name
+import './Rockpaperscissor.css';
+
 const Rockpaperscissor = () => {
     const navigate = useNavigate();
     
-    const [gameState, setGameState] = useState('roundSelection'); // 'roundSelection', 'menu', 'playing', 'result', 'gameOver'
+    const [gameState, setGameState] = useState('roundSelection');
     const [difficulty, setDifficulty] = useState('');
-    const [roundLimit, setRoundLimit] = useState(3); // round category hehe 3, 5, 10, or 'unlimited'
+    const [roundLimit, setRoundLimit] = useState(3);
     const [playerChoice, setPlayerChoice] = useState('');
     const [computerChoice, setComputerChoice] = useState('');
     const [result, setResult] = useState('');
@@ -14,27 +15,24 @@ const Rockpaperscissor = () => {
     const [computerScore, setComputerScore] = useState(0);
     const [rounds, setRounds] = useState(0);
     const [playerHistory, setPlayerHistory] = useState([]);
-    const [computerWins, setComputerWins] = useState(0); // Track ng comp wins
-    const [playerWins, setPlayerWins] = useState(0); // Track ng player wins
-    const [playerPatterns, setPlayerPatterns] = useState({}); // Store detected patterns, para sa difficulty
-    const [lastPlayerMove, setLastPlayerMove] = useState(''); // Track last move ng player
+    const [computerWins, setComputerWins] = useState(0);
+    const [playerWins, setPlayerWins] = useState(0);
+    const [playerPatterns, setPlayerPatterns] = useState({});
+    const [lastPlayerMove, setLastPlayerMove] = useState('');
     
     const choices = ['rock', 'paper', 'scissors'];
     
-    // Handle round limit selection, set ng round limit
     const selectRoundLimit = (limit) => {
         setRoundLimit(limit);
         setGameState('menu');
     };
     
-    // Handle difficulty selection
     const selectDifficulty = (level) => {
         setDifficulty(level);
         setGameState('playing');
         resetGame();
     };
     
-    // Reset game
     const resetGame = () => {
         setPlayerChoice('');
         setComputerChoice('');
@@ -49,7 +47,6 @@ const Rockpaperscissor = () => {
         setLastPlayerMove('');
     };
     
-    // Handle player choice
     const handleChoice = (choice) => {
         if (gameState !== 'playing') return;
         
@@ -57,18 +54,14 @@ const Rockpaperscissor = () => {
         const compChoice = getComputerChoice(difficulty, choice);
         setComputerChoice(compChoice);
         
-        // Update player history for strategy
         setPlayerHistory([...playerHistory, choice]);
         setLastPlayerMove(choice);
         
-        // Update patterns database
         updatePatterns(choice);
         
-        // Determine winner
         const gameResult = determineWinner(choice, compChoice);
         setResult(gameResult);
         
-        // Update scores
         if (gameResult === 'You Win!') {
             setPlayerScore(playerScore + 1);
             setPlayerWins(playerWins + 1);
@@ -79,7 +72,6 @@ const Rockpaperscissor = () => {
         
         setRounds(rounds + 1);
         
-        // Check if game should end based on round limit
         if (roundLimit !== 'unlimited' && rounds + 1 >= roundLimit) {
             setGameState('gameOver');
         } else {
@@ -87,7 +79,6 @@ const Rockpaperscissor = () => {
         }
     };
     
-    // Update player patterns for learning
     const updatePatterns = (choice) => {
         if (playerHistory.length > 0) {
             const lastMove = playerHistory[playerHistory.length - 1];
@@ -99,23 +90,18 @@ const Rockpaperscissor = () => {
         }
     };
     
-    // Get computer choice based on difficulty
     const getComputerChoice = (level, playerChoice) => {
         switch (level) {
             case 'easy':
-                // Completely random
                 return choices[Math.floor(Math.random() * 3)];
                 
             case 'medium':
-                // Ultra-competitive medium difficulty
                 if (playerHistory.length > 0) {
-                    // Strategy 1: Immediate counter to last move (95% chance)
-                    if (Math.random() < 0.95) {
+                    if (Math.random() < 0.99) {
                         return getCounterChoice(lastPlayerMove || playerChoice);
                     }
                     
-                    // Strategy 2: Exploit detected patterns (90% chance)
-                    if (Object.keys(playerPatterns).length > 0 && Math.random() < 0.9) {
+                    if (Object.keys(playerPatterns).length > 0 && Math.random() < 0.98) {
                         const lastMove = playerHistory[playerHistory.length - 1];
                         if (playerPatterns[lastMove]) {
                             let mostLikely = 'rock';
@@ -132,32 +118,32 @@ const Rockpaperscissor = () => {
                         }
                     }
                     
-                    // Strategy 3: Frequency domination (85% chance)
-                    const frequency = {};
-                    playerHistory.forEach(choice => {
-                        frequency[choice] = (frequency[choice] || 0) + 1;
-                    });
-                    
-                    let mostFrequent = playerHistory[0];
-                    for (const choice in frequency) {
-                        if (frequency[choice] > frequency[mostFrequent]) {
-                            mostFrequent = choice;
+                    if (Math.random() < 0.95) {
+                        const frequency = {};
+                        const recentMoves = playerHistory.slice(-5);
+                        recentMoves.forEach(choice => {
+                            frequency[choice] = (frequency[choice] || 0) + 1;
+                        });
+                        
+                        let mostFrequent = 'rock';
+                        let maxCount = 0;
+                        for (const choice in frequency) {
+                            if (frequency[choice] > maxCount) {
+                                maxCount = frequency[choice];
+                                mostFrequent = choice;
+                            }
                         }
-                    }
-                    
-                    if (Math.random() < 0.85) {
+                        
                         return getCounterChoice(mostFrequent);
                     }
                     
-                    // Strategy 4: Anti-rotation strategy (80% chance)
-                    if (playerHistory.length > 2 && Math.random() < 0.8) {
+                    if (playerHistory.length > 2 && Math.random() < 0.95) {
                         const lastThree = playerHistory.slice(-3);
                         const isRotating = (lastThree[0] !== lastThree[1] && 
                                           lastThree[1] !== lastThree[2] && 
                                           lastThree[0] !== lastThree[2]);
                         
                         if (isRotating) {
-                            // Player is rotating, predict next in rotation
                             const rotationOrder = ['rock', 'paper', 'scissors'];
                             const lastIndex = rotationOrder.indexOf(lastThree[2]);
                             const nextInRotation = rotationOrder[(lastIndex + 1) % 3];
@@ -165,38 +151,45 @@ const Rockpaperscissor = () => {
                         }
                     }
                     
-                    // Strategy 5: Predict breaker (75% chance)
-                    if (playerHistory.length > 1 && Math.random() < 0.75) {
+                    if (playerHistory.length > 1 && Math.random() < 0.9) {
                         const lastTwo = playerHistory.slice(-2);
                         if (lastTwo[0] === lastTwo[1]) {
-                            // Player repeated, likely to break pattern
                             const counterToRepeat = getCounterChoice(lastTwo[0]);
                             return getCounterChoice(counterToRepeat);
                         }
+                    }
+                    
+                    if (playerHistory.length > 3 && Math.random() < 0.85) {
+                        const winPattern = analyzeWinPattern();
+                        if (winPattern.nextMove) {
+                            return getCounterChoice(winPattern.nextMove);
+                        }
+                    }
+                    
+                    if (playerHistory.length > 2 && Math.random() < 0.8) {
+                        const predictedOurMove = getCounterChoice(lastPlayerMove);
+                        const counterToOurCounter = getCounterChoice(predictedOurMove);
+                        return counterToOurCounter;
                     }
                 }
                 return choices[Math.floor(Math.random() * 3)];
                 
             case 'hard':
-                // Nearly unbeatable hard difficulty with predictive dominance
                 if (playerHistory.length > 0) {
-                    // Strategy 1: Guaranteed win in specific situations (99% chance)
                     if (Math.random() < 0.99) {
-                        // Check if we can force a win based on patterns
-                        for (let i = Math.min(playerHistory.length, 5); i > 0; i--) {
-                            const recentPattern = playerHistory.slice(-i).join('-');
+                        for (let patternLength = Math.min(playerHistory.length, 6); patternLength > 2; patternLength--) {
+                            const recentPattern = playerHistory.slice(-patternLength).join('-');
                             const patternMatches = [];
                             
-                            for (let j = 0; j < playerHistory.length - i; j++) {
-                                if (playerHistory.slice(j, j + i).join('-') === recentPattern) {
-                                    if (j + i < playerHistory.length) {
-                                        patternMatches.push(playerHistory[j + i]);
+                            for (let j = 0; j < playerHistory.length - patternLength; j++) {
+                                if (playerHistory.slice(j, j + patternLength).join('-') === recentPattern) {
+                                    if (j + patternLength < playerHistory.length) {
+                                        patternMatches.push(playerHistory[j + patternLength]);
                                     }
                                 }
                             }
                             
-                            if (patternMatches.length > 0) {
-                                // Find the most common next move after this pattern
+                            if (patternMatches.length > 1) {
                                 const frequency = {};
                                 patternMatches.forEach(move => {
                                     frequency[move] = (frequency[move] || 0) + 1;
@@ -216,14 +209,10 @@ const Rockpaperscissor = () => {
                         }
                     }
                     
-                    // Strategy 2: Meta-learning adaptation (95% chance)
-                    if (Math.random() < 0.95) {
-                        // Analyze what strategies have worked against this player
+                    if (Math.random() < 0.98) {
                         if (computerWins > playerWins * 1.5) {
-                            // We're dominating, continue aggressive play
                             return getCounterChoice(lastPlayerMove || playerChoice);
                         } else {
-                            // Need to adapt, use complex prediction
                             const prediction = getAdvancedPrediction();
                             if (prediction) {
                                 return getCounterChoice(prediction);
@@ -231,29 +220,34 @@ const Rockpaperscissor = () => {
                         }
                     }
                     
-                    // Strategy 3: Psychological warfare (90% chance)
-                    if (Math.random() < 0.9) {
-                        // Analyze player's emotional state based on history
-                        const recentResults = [];
-                        for (let i = playerHistory.length - 1; i >= Math.max(0, playerHistory.length - 3); i--) {
-                            // Simplified emotional analysis
-                            if (i > 0) {
-                                const playerPrevChoice = playerHistory[i - 1];
-                                const playerCurrChoice = playerHistory[i];
-                                
-                                // If player switched after losing, they're frustrated
-                                if (playerPrevChoice !== playerCurrChoice) {
-                                    // Predict they'll continue switching
-                                    const counterToSwitch = getCounterChoice(playerChoice);
-                                    return getCounterChoice(counterToSwitch);
-                                }
-                            }
+                    if (Math.random() < 0.95) {
+                        const emotionalState = analyzeEmotionalState();
+                        if (emotionalState.predictedMove) {
+                            return getCounterChoice(emotionalState.predictedMove);
                         }
                     }
                     
-                    // Strategy 4: Strategic sequence prediction (85% chance)
-                    if (playerHistory.length > 4 && Math.random() < 0.85) {
-                        // Look for strategic sequences (not just patterns)
+                    if (Math.random() < 0.95) {
+                        const frequency = {};
+                        const recentMoves = playerHistory.slice(-7);
+                        recentMoves.forEach((choice, index) => {
+                            const weight = (index + 1) / recentMoves.length;
+                            frequency[choice] = (frequency[choice] || 0) + weight;
+                        });
+                        
+                        let mostFrequent = 'rock';
+                        let maxWeight = 0;
+                        for (const choice in frequency) {
+                            if (frequency[choice] > maxWeight) {
+                                maxWeight = frequency[choice];
+                                mostFrequent = choice;
+                            }
+                        }
+                        
+                        return getCounterChoice(mostFrequent);
+                    }
+                    
+                    if (playerHistory.length > 4 && Math.random() < 0.9) {
                         const sequences = {};
                         for (let i = 0; i < playerHistory.length - 2; i++) {
                             const seq = playerHistory.slice(i, i + 3).join(',');
@@ -285,15 +279,27 @@ const Rockpaperscissor = () => {
                         }
                     }
                     
-                    // Strategy 5: Dominance play (80% chance)
+                    if (playerHistory.length > 3 && Math.random() < 0.85) {
+                        const ourLastMoves = [];
+                        for (let i = 1; i < Math.min(4, playerHistory.length); i++) {
+                            ourLastMoves.push(getCounterChoice(playerHistory[playerHistory.length - i]));
+                        }
+                        
+                        const playerMoveCounters = playerHistory.map(move => getCounterChoice(move));
+                        const isCountering = playerMoveCounters.some(counter => 
+                            ourLastMoves.includes(counter)
+                        );
+                        
+                        if (isCountering) {
+                            return choices[Math.floor(Math.random() * 3)];
+                        }
+                    }
+                    
                     if (Math.random() < 0.8) {
-                        // If we're ahead, play conservatively but smart
                         if (computerScore > playerScore) {
-                            // Predict player's desperate move
                             const desperateMove = getCounterChoice(playerChoice);
                             return getCounterChoice(desperateMove);
                         } else {
-                            // Play aggressively to catch up
                             return getCounterChoice(lastPlayerMove || playerChoice);
                         }
                     }
@@ -305,18 +311,75 @@ const Rockpaperscissor = () => {
         }
     };
     
-    // Advanced prediction for hard mode
+    const analyzeEmotionalState = () => {
+        if (playerHistory.length < 3) return { predictedMove: null };
+        
+        const recentResults = [];
+        for (let i = playerHistory.length - 1; i >= Math.max(0, playerHistory.length - 3); i--) {
+            if (i > 0) {
+                const playerPrevChoice = playerHistory[i - 1];
+                const playerCurrChoice = playerHistory[i];
+                
+                if (playerPrevChoice !== playerCurrChoice) {
+                    const switchPattern = [getCounterChoice(playerPrevChoice), getCounterChoice(playerCurrChoice)];
+                    const nextSwitch = switchPattern[Math.floor(Math.random() * switchPattern.length)];
+                    return { predictedMove: nextSwitch };
+                }
+            }
+        }
+        
+        const lastThree = playerHistory.slice(-3);
+        if (lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2]) {
+            return { predictedMove: getCounterChoice(lastThree[0]) };
+        }
+        
+        return { predictedMove: null };
+    };
+    
+    const analyzeWinPattern = () => {
+        if (playerHistory.length < 4) return { nextMove: null };
+        
+        const patterns = { afterWin: {}, afterLoss: {} };
+        
+        for (let i = 1; i < playerHistory.length; i++) {
+            const prevMove = playerHistory[i - 1];
+            const currMove = playerHistory[i];
+            
+            const didWin = determineWinner(prevMove, getComputerChoice('medium', prevMove)) === 'You Win!';
+            const key = didWin ? 'afterWin' : 'afterLoss';
+            
+            if (!patterns[key][currMove]) {
+                patterns[key][currMove] = 0;
+            }
+            patterns[key][currMove]++;
+        }
+        
+        const lastResult = determineWinner(playerHistory[playerHistory.length - 2], getComputerChoice('medium', playerHistory[playerHistory.length - 2]));
+        if (lastResult === 'You Win!') {
+            const lastWinningMove = playerHistory[playerHistory.length - 2];
+            if (patterns.afterWin[lastWinningMove]) {
+                return { nextMove: lastWinningMove };
+            }
+        } else {
+            const lastLosingMove = playerHistory[playerHistory.length - 2];
+            const switches = choices.filter(choice => choice !== lastLosingMove);
+            if (switches.length > 0) {
+                return { nextMove: switches[Math.floor(Math.random() * switches.length)] };
+            }
+        }
+        
+        return { nextMove: null };
+    };
+    
     const getAdvancedPrediction = () => {
         if (playerHistory.length < 3) return null;
         
-        // Multiple prediction models
         const predictions = [];
         
-        // Model 1: Weighted frequency
-        const weights = [0.5, 0.3, 0.2]; // More weight to recent moves
+        const weights = [0.6, 0.3, 0.1];
         const weightedFreq = { rock: 0, paper: 0, scissors: 0 };
         
-        for (let i = 0; i < Math.min(3, playerHistory.length); i++) {
+        for (let i = 0; i < Math.min(4, playerHistory.length); i++) {
             const move = playerHistory[playerHistory.length - 1 - i];
             weightedFreq[move] += weights[i];
         }
@@ -331,26 +394,30 @@ const Rockpaperscissor = () => {
         }
         predictions.push(weightedPrediction);
         
-        // Model 2: Pattern-based prediction
-        if (playerHistory.length > 4) {
-            const lastTwo = playerHistory.slice(-2).join('-');
-            for (let i = 0; i < playerHistory.length - 2; i++) {
-                if (playerHistory.slice(i, i + 2).join('-') === lastTwo) {
-                    if (i + 2 < playerHistory.length) {
-                        predictions.push(playerHistory[i + 2]);
+        if (playerHistory.length > 5) {
+            const lastThree = playerHistory.slice(-3).join('-');
+            for (let i = 0; i < playerHistory.length - 3; i++) {
+                if (playerHistory.slice(i, i + 3).join('-') === lastThree) {
+                    if (i + 3 < playerHistory.length) {
+                        predictions.push(playerHistory[i + 3]);
                     }
                 }
             }
         }
         
-        // Model 3: Anti-pattern prediction
         if (playerHistory.length > 2) {
             const lastMove = playerHistory[playerHistory.length - 1];
             const antiPattern = getCounterChoice(getCounterChoice(lastMove));
             predictions.push(antiPattern);
         }
         
-        // Combine predictions
+        if (playerHistory.length > 4) {
+            const rhythm = detectPlayerRhythm();
+            if (rhythm.nextMove) {
+                predictions.push(rhythm.nextMove);
+            }
+        }
+        
         if (predictions.length > 0) {
             const freq = {};
             predictions.forEach(pred => {
@@ -372,7 +439,43 @@ const Rockpaperscissor = () => {
         return null;
     };
     
-    // Get the choice that beats the given choice
+    const detectPlayerRhythm = () => {
+        if (playerHistory.length < 5) return { nextMove: null };
+        
+        const lastFive = playerHistory.slice(-5);
+        const patterns = [];
+        
+        for (let length = 2; length <= 3; length++) {
+            for (let i = 0; i <= lastFive.length - length; i++) {
+                const pattern = lastFive.slice(i, i + length).join('-');
+                const nextMoves = [];
+                
+                for (let j = i + length; j < lastFive.length - length; j++) {
+                    if (lastFive.slice(j, j + length).join('-') === pattern) {
+                        if (j + length < lastFive.length) {
+                            nextMoves.push(lastFive[j + length]);
+                        }
+                    }
+                }
+                
+                if (nextMoves.length > 1) {
+                    const freq = {};
+                    nextMoves.forEach(move => {
+                        freq[move] = (freq[move] || 0) + 1;
+                    });
+                    
+                    const mostCommon = Object.keys(freq).reduce((a, b) => 
+                        freq[a] > freq[b] ? a : b
+                    );
+                    
+                    return { nextMove: mostCommon };
+                }
+            }
+        }
+        
+        return { nextMove: null };
+    };
+    
     const getCounterChoice = (choice) => {
         switch (choice) {
             case 'rock':
@@ -386,7 +489,6 @@ const Rockpaperscissor = () => {
         }
     };
     
-    // Determine the winner
     const determineWinner = (player, computer) => {
         if (player === computer) return "It's a Tie!";
         
@@ -401,7 +503,6 @@ const Rockpaperscissor = () => {
         return 'Computer Wins!';
     };
     
-    // Play another round
     const playAgain = () => {
         setPlayerChoice('');
         setComputerChoice('');
@@ -409,7 +510,6 @@ const Rockpaperscissor = () => {
         setGameState('playing');
     };
     
-    // Continue to next round
     const nextRound = () => {
         setPlayerChoice('');
         setComputerChoice('');
@@ -417,337 +517,113 @@ const Rockpaperscissor = () => {
         setGameState('playing');
     };
     
-    // Go back to menu
     const backToMenu = () => {
         setGameState('menu');
         resetGame();
     };
     
-    // Go back to round selection
     const backToRoundSelection = () => {
         setGameState('roundSelection');
         resetGame();
     };
     
-    // Start new game with same settings
-    const startNewGame = () => {
-        resetGame();
-        setGameState('playing');
-    };
+    // Animated Pixel Icon Component
+const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
+    const [isAnimating, setIsAnimating] = useState(false);
     
-    // Pixel art style component for choice icons
-    const PixelIcon = ({ choice, size = 80 }) => {
-        if (choice === 'rock') {
-            return (
-                <div style={{ 
-                    width: `${size}px`, 
-                    height: `${size}px`, 
-                    backgroundColor: '#8B7355',
-                    border: '3px solid #5C4033',
-                    position: 'relative',
-                    imageRendering: 'pixelated'
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: '15%',
-                        left: '15%',
-                        width: '70%',
-                        height: '70%',
-                        backgroundColor: '#A0826D',
-                        border: '2px solid #5C4033'
-                    }}></div>
-                </div>
-            );
-        } else if (choice === 'paper') {
-            return (
-                <div style={{ 
-                    width: `${size}px`, 
-                    height: `${size}px`, 
-                    backgroundColor: '#F5F5DC',
-                    border: '3px solid #D3D3D3',
-                    position: 'relative',
-                    imageRendering: 'pixelated'
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: '10%',
-                        left: '10%',
-                        width: '80%',
-                        height: '80%',
-                        backgroundColor: '#FFFFFF',
-                        border: '2px solid #D3D3D3'
-                    }}></div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '30%',
-                        left: '20%',
-                        width: '60%',
-                        height: '5%',
-                        backgroundColor: '#D3D3D3'
-                    }}></div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '45%',
-                        left: '20%',
-                        width: '60%',
-                        height: '5%',
-                        backgroundColor: '#D3D3D3'
-                    }}></div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '60%',
-                        left: '20%',
-                        width: '60%',
-                        height: '5%',
-                        backgroundColor: '#D3D3D3'
-                    }}></div>
-                </div>
-            );
-        } else if (choice === 'scissors') {
-            return (
-                <div style={{ 
-                    width: `${size}px`, 
-                    height: `${size}px`, 
-                    position: 'relative',
-                    imageRendering: 'pixelated'
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: '20%',
-                        left: '35%',
-                        width: '30%',
-                        height: '60%',
-                        backgroundColor: '#C0C0C0',
-                        border: '3px solid #808080',
-                        transform: 'rotate(45deg)',
-                        transformOrigin: 'center'
-                    }}></div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '20%',
-                        left: '35%',
-                        width: '30%',
-                        height: '60%',
-                        backgroundColor: '#C0C0C0',
-                        border: '3px solid #808080',
-                        transform: 'rotate(-45deg)',
-                        transformOrigin: 'center'
-                    }}></div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '60%',
-                        left: '40%',
-                        width: '20%',
-                        height: '20%',
-                        backgroundColor: '#696969',
-                        border: '2px solid #2F4F4F'
-                    }}></div>
-                </div>
-            );
+    useEffect(() => {
+        if (isSelected) {
+            setIsAnimating(true);
+            const timer = setTimeout(() => {
+                setIsAnimating(false);
+            }, 100);
+            return () => clearTimeout(timer);
         }
-        return null;
-    };
+    }, [isSelected]);
     
-    // Render game based on state
+    if (choice === 'rock') {
+        return (
+            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                <div className="rock-base"></div>
+                <div className="rock-crack rock-crack-1"></div>
+                <div className="rock-crack rock-crack-2"></div>
+                <div className="rock-crack rock-crack-3"></div>
+                <div className="rock-crack rock-crack-4"></div>
+                <div className="rock-crack rock-crack-5"></div>
+                <div className="rock-detail rock-detail-1"></div>
+                <div className="rock-detail rock-detail-2"></div>
+                <div className="rock-detail rock-detail-3"></div>
+                <div className="rock-highlight"></div>
+            </div>
+        );
+    } else if (choice === 'paper') {
+        return (
+            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                <div className="paper-base"></div>
+                <div className="paper-fold paper-fold-1"></div>
+                <div className="paper-fold paper-fold-2"></div>
+                <div className="paper-fold paper-fold-3"></div>
+                <div className="paper-line paper-line-1"></div>
+                <div className="paper-line paper-line-2"></div>
+                <div className="paper-line paper-line-3"></div>
+                <div className="paper-text paper-text-1">Lorem ipsum</div>
+                <div className="paper-text paper-text-2">Dolor sit amet</div>
+                <div className="paper-text paper-text-3">Consectetur</div>
+                <div className="paper-corner"></div>
+                <div className="paper-highlight"></div>
+            </div>
+        );
+    } else if (choice === 'scissors') {
+        return (
+            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                <div className="scissors-blade scissors-blade-1">
+                    <div className="scissors-edge"></div>
+                    <div className="scissors-reflection"></div>
+                </div>
+                <div className="scissors-blade scissors-blade-2">
+                    <div className="scissors-edge"></div>
+                    <div className="scissors-reflection"></div>
+                </div>
+                <div className="scissors-pivot">
+                    <div className="scissors-pivot-center"></div>
+                </div>
+                <div className="scissors-handle scissors-handle-1">
+                    <div className="scissors-handle-hole"></div>
+                </div>
+                <div className="scissors-handle scissors-handle-2">
+                    <div className="scissors-handle-hole"></div>
+                </div>
+                <div className="scissors-highlight"></div>
+            </div>
+        );
+    }
+    return null;
+};
+    
     const renderGame = () => {
         if (gameState === 'roundSelection') {
             return (
-                <div style={{
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url('https://i.pinimg.com/736x/a9/b8/cf/a9b8cf03aafc0ed58b542e03d281dd2f.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fontFamily: 'monospace',
-                    color: '#eee',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Game content with retro pixel frame */}
-                    <div style={{
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '90%',
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        backgroundColor: 'rgba(25, 25, 112, 0.85)',
-                        border: '8px solid #000',
-                        borderRadius: '0px',
-                        padding: '30px',
-                        textAlign: 'center',
-                        boxShadow: '0 0 0 4px #444, 0 0 0 8px #666',
-                        imageRendering: 'pixelated',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        {/* Pixel border decoration */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            bottom: '10px',
-                            border: '2px solid #aaa',
-                            pointerEvents: 'none'
-                        }}></div>
+                <div className="game-container round-selection">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
                         
-                        <h1 style={{
-                            fontSize: '32px',
-                            marginBottom: '20px',
-                            color: '#ffcc00',
-                            textShadow: '3px 3px 0 #000',
-                            letterSpacing: '3px',
-                            fontWeight: 'bold'
-                        }}>
-                            ROCK PAPER SCISSORS
-                        </h1>
-                        <h2 style={{
-                            fontSize: '24px',
-                            marginBottom: '30px',
-                            color: '#fff',
-                            textShadow: '2px 2px 0 #000'
-                        }}>
-                            SELECT ROUND LIMIT
-                        </h2>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px', flexWrap: 'wrap' }}>
-                            <button 
-                                onClick={() => selectRoundLimit(3)} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#1e3a8a', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h2 className="section-title">SELECT ROUND LIMIT</h2>
+                        <div className="button-group">
+                            <button onClick={() => selectRoundLimit(3)} className="game-button">
                                 Best of 3
                             </button>
-                            <button 
-                                onClick={() => selectRoundLimit(5)} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#1e3a8a', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => selectRoundLimit(5)} className="game-button">
                                 Best of 5
                             </button>
-                            <button 
-                                onClick={() => selectRoundLimit(10)} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#1e3a8a', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => selectRoundLimit(10)} className="game-button">
                                 Best of 10
                             </button>
-                            <button 
-                                onClick={() => selectRoundLimit('unlimited')} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#1e3a8a', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => selectRoundLimit('unlimited')} className="game-button">
                                 Unlimited
                             </button>
                         </div>
-                        <button 
-                            onClick={() => navigate('/home')} 
-                            style={{ 
-                                marginTop: '30px',
-                                padding: '10px 15px', 
-                                cursor: 'pointer', 
-                                background: '#ff5252', 
-                                color: 'white', 
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                fontFamily: 'monospace',
-                                boxShadow: '4px 4px 0 #000',
-                                transition: 'all 0.1s',
-                                textTransform: 'uppercase'
-                            }}
-                            onMouseOver={(e) => {
-                                e.target.style.transform = 'translate(2px, 2px)';
-                                e.target.style.boxShadow = '2px 2px 0 #000';
-                            }}
-                            onMouseOut={(e) => {
-                                e.target.style.transform = 'translate(0, 0)';
-                                e.target.style.boxShadow = '4px 4px 0 #000';
-                            }}
-                        >
+                        <button onClick={() => navigate('/home')} className="back-button">
                             Back to Home
                         </button>
                     </div>
@@ -755,208 +631,31 @@ const Rockpaperscissor = () => {
             );
         } else if (gameState === 'menu') {
             return (
-                <div style={{
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url('https://i.pinimg.com/736x/a9/b8/cf/a9b8cf03aafc0ed58b542e03d281dd2f.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fontFamily: 'monospace',
-                    color: '#eee',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Game content with retro pixel frame */}
-                    <div style={{
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '90%',
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        backgroundColor: 'rgba(25, 25, 112, 0.85)',
-                        border: '8px solid #000',
-                        borderRadius: '0px',
-                        padding: '30px',
-                        textAlign: 'center',
-                        boxShadow: '0 0 0 4px #444, 0 0 0 8px #666',
-                        imageRendering: 'pixelated',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        {/* Pixel border decoration */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            bottom: '10px',
-                            border: '2px solid #aaa',
-                            pointerEvents: 'none'
-                        }}></div>
+                <div className="game-container menu">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
                         
-                        <h1 style={{
-                            fontSize: '32px',
-                            marginBottom: '20px',
-                            color: '#ffcc00',
-                            textShadow: '3px 3px 0 #000',
-                            letterSpacing: '3px',
-                            fontWeight: 'bold'
-                        }}>
-                            ROCK PAPER SCISSORS
-                        </h1>
-                        <h2 style={{
-                            fontSize: '24px',
-                            marginBottom: '15px',
-                            color: '#fff',
-                            textShadow: '2px 2px 0 #000'
-                        }}>
-                            SELECT DIFFICULTY
-                        </h2>
-                        <p style={{
-                            fontSize: '18px',
-                            marginBottom: '30px',
-                            color: '#ddd',
-                            textShadow: '1px 1px 0 #000'
-                        }}>
+                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h2 className="section-title">SELECT DIFFICULTY</h2>
+                        <p className="round-info">
                             Round Limit: {roundLimit === 'unlimited' ? 'Unlimited' : `Best of ${roundLimit}`}
                         </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
-                            <button 
-                                onClick={() => selectDifficulty('easy')} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#4caf50', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                        <div className="button-group">
+                            <button onClick={() => selectDifficulty('easy')} className="game-button easy">
                                 Easy
                             </button>
-                            <button 
-                                onClick={() => selectDifficulty('medium')} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#ff9800', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => selectDifficulty('medium')} className="game-button medium">
                                 Medium
                             </button>
-                            <button 
-                                onClick={() => selectDifficulty('hard')} 
-                                style={{ 
-                                    padding: '15px 20px', 
-                                    cursor: 'pointer', 
-                                    background: '#f44336', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => selectDifficulty('hard')} className="game-button hard">
                                 Hard
                             </button>
                         </div>
-                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                            <button 
-                                onClick={backToRoundSelection} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#7e57c2', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                        <div className="button-group secondary">
+                            <button onClick={backToRoundSelection} className="secondary-button">
                                 Change Round Limit
                             </button>
-                            <button 
-                                onClick={() => navigate('/home')} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#ff5252', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={() => navigate('/home')} className="secondary-button">
                                 Back to Home
                             </button>
                         </div>
@@ -965,170 +664,39 @@ const Rockpaperscissor = () => {
             );
         } else if (gameState === 'playing') {
             return (
-                <div style={{
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url('https://i.pinimg.com/736x/a9/b8/cf/a9b8cf03aafc0ed58b542e03d281dd2f.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fontFamily: 'monospace',
-                    color: '#eee',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Game content with retro pixel frame */}
-                    <div style={{
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '90%',
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        backgroundColor: 'rgba(25, 25, 112, 0.85)',
-                        border: '8px solid #000',
-                        borderRadius: '0px',
-                        padding: '30px',
-                        textAlign: 'center',
-                        boxShadow: '0 0 0 4px #444, 0 0 0 8px #666',
-                        imageRendering: 'pixelated',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        {/* Pixel border decoration */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            bottom: '10px',
-                            border: '2px solid #aaa',
-                            pointerEvents: 'none'
-                        }}></div>
+                <div className="game-container playing">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
                         
-                        <h1 style={{
-                            fontSize: '32px',
-                            marginBottom: '20px',
-                            color: '#ffcc00',
-                            textShadow: '3px 3px 0 #000',
-                            letterSpacing: '3px',
-                            fontWeight: 'bold'
-                        }}>
-                            ROCK PAPER SCISSORS
-                        </h1>
-                        <h2 style={{
-                            fontSize: '24px',
-                            marginBottom: '15px',
-                            color: '#fff',
-                            textShadow: '2px 2px 0 #000'
-                        }}>
+                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h2 className="section-title">
                             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} MODE
                         </h2>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(76, 175, 80, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>PLAYER: {playerScore}</h3>
+                        <div className="score-container">
+                            <div className="score-box player-score">
+                                <h3>PLAYER: {playerScore}</h3>
                             </div>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(255, 152, 0, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>ROUND: {rounds}{roundLimit !== 'unlimited' ? `/${roundLimit}` : ''}</h3>
+                            <div className="score-box round-info">
+                                <h3>ROUND: {rounds}{roundLimit !== 'unlimited' ? `/${roundLimit}` : ''}</h3>
                             </div>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(244, 67, 54, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>COMPUTER: {computerScore}</h3>
+                            <div className="score-box computer-score">
+                                <h3>COMPUTER: {computerScore}</h3>
                             </div>
                         </div>
-                        <h2 style={{
-                            fontSize: '24px',
-                            marginBottom: '30px',
-                            color: '#fff',
-                            textShadow: '2px 2px 0 #000'
-                        }}>
-                            MAKE YOUR CHOICE:
-                        </h2>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginTop: '30px' }}>
+                        <h2 className="section-title">MAKE YOUR CHOICE:</h2>
+                        <div className="choices-container">
                             {choices.map(choice => (
-                                <div key={choice} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <button 
-                                        onClick={() => handleChoice(choice)} 
-                                        style={{ 
-                                            padding: '15px',
-                                            cursor: 'pointer', 
-                                            background: 'transparent', 
-                                            color: 'white', 
-                                            border: 'none',
-                                            position: 'relative',
-                                            transition: 'all 0.1s'
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.target.style.transform = 'translateY(-5px)';
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.target.style.transform = 'translateY(0)';
-                                        }}
-                                    >
-                                        <PixelIcon choice={choice} size={100} />
+                                <div key={choice} className="choice-container">
+                                    <button onClick={() => handleChoice(choice)} className="choice-button">
+                                        <AnimatedPixelIcon choice={choice} size={100} isSelected={false} />
                                     </button>
-                                    <div style={{
-                                        marginTop: '10px',
-                                        padding: '8px 15px',
-                                        backgroundColor: '#1e3a8a',
-                                        border: '4px solid #000',
-                                        borderRadius: '0px',
-                                        textTransform: 'capitalize',
-                                        fontSize: '16px',
-                                        fontWeight: 'bold',
-                                        fontFamily: 'monospace',
-                                        boxShadow: '4px 4px 0 #000',
-                                        textShadow: '1px 1px 0 #000'
-                                    }}>
+                                    <div className="choice-label">
                                         {choice}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <button 
-                            onClick={backToMenu} 
-                            style={{ 
-                                marginTop: '30px',
-                                padding: '10px 15px', 
-                                cursor: 'pointer', 
-                                background: '#ff5252', 
-                                color: 'white', 
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                fontFamily: 'monospace',
-                                boxShadow: '4px 4px 0 #000',
-                                transition: 'all 0.1s',
-                                textTransform: 'uppercase'
-                            }}
-                            onMouseOver={(e) => {
-                                e.target.style.transform = 'translate(2px, 2px)';
-                                e.target.style.boxShadow = '2px 2px 0 #000';
-                            }}
-                            onMouseOut={(e) => {
-                                e.target.style.transform = 'translate(0, 0)';
-                                e.target.style.boxShadow = '4px 4px 0 #000';
-                            }}
-                        >
+                        <button onClick={backToMenu} className="back-button">
                             Back to Menu
                         </button>
                     </div>
@@ -1136,417 +704,92 @@ const Rockpaperscissor = () => {
             );
         } else if (gameState === 'result') {
             return (
-                <div style={{
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url('https://i.pinimg.com/736x/a9/b8/cf/a9b8cf03aafc0ed58b542e03d281dd2f.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fontFamily: 'monospace',
-                    color: '#eee',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Game content with retro pixel frame */}
-                    <div style={{
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '90%',
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        backgroundColor: 'rgba(25, 25, 112, 0.85)',
-                        border: '8px solid #000',
-                        borderRadius: '0px',
-                        padding: '30px',
-                        textAlign: 'center',
-                        boxShadow: '0 0 0 4px #444, 0 0 0 8px #666',
-                        imageRendering: 'pixelated',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        {/* Pixel border decoration */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            bottom: '10px',
-                            border: '2px solid #aaa',
-                            pointerEvents: 'none'
-                        }}></div>
+                <div className="game-container result">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
                         
-                        <h1 style={{
-                            fontSize: '32px',
-                            marginBottom: '20px',
-                            color: '#ffcc00',
-                            textShadow: '3px 3px 0 #000',
-                            letterSpacing: '3px',
-                            fontWeight: 'bold'
-                        }}>
-                            ROCK PAPER SCISSORS
-                        </h1>
-                        <h2 style={{
-                            fontSize: '24px',
-                            marginBottom: '15px',
-                            color: '#fff',
-                            textShadow: '2px 2px 0 #000'
-                        }}>
+                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h2 className="section-title">
                             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} MODE
                         </h2>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(76, 175, 80, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>PLAYER: {playerScore}</h3>
+                        <div className="score-container">
+                            <div className="score-box player-score">
+                                <h3>PLAYER: {playerScore}</h3>
                             </div>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(255, 152, 0, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>ROUND: {rounds}{roundLimit !== 'unlimited' ? `/${roundLimit}` : ''}</h3>
+                            <div className="score-box round-info">
+                                <h3>ROUND: {rounds}{roundLimit !== 'unlimited' ? `/${roundLimit}` : ''}</h3>
                             </div>
-                            <div style={{
-                                padding: '10px 15px',
-                                backgroundColor: 'rgba(244, 67, 54, 0.7)',
-                                border: '4px solid #000',
-                                borderRadius: '0px',
-                                boxShadow: '4px 4px 0 #000'
-                            }}>
-                                <h3 style={{ textShadow: '1px 1px 0 #000' }}>COMPUTER: {computerScore}</h3>
+                            <div className="score-box computer-score">
+                                <h3>COMPUTER: {computerScore}</h3>
                             </div>
                         </div>
-                        <div style={{ margin: '30px 0' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '50px' }}>
-                                <div>
-                                    <h3 style={{ marginBottom: '10px', textShadow: '2px 2px 0 #000' }}>YOU CHOSE:</h3>
-                                    <div style={{ 
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        padding: '20px', 
-                                        backgroundColor: 'rgba(76, 175, 80, 0.7)', 
-                                        border: '4px solid #000',
-                                        borderRadius: '0px',
-                                        boxShadow: '4px 4px 0 #000'
-                                    }}>
-                                        <PixelIcon choice={playerChoice} size={80} />
-                                        <div style={{
-                                            marginTop: '10px',
-                                            textTransform: 'capitalize',
-                                            fontSize: '18px',
-                                            fontWeight: 'bold',
-                                            textShadow: '1px 1px 0 #000'
-                                        }}>
-                                            {playerChoice}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h3 style={{ marginBottom: '10px', textShadow: '2px 2px 0 #000' }}>COMPUTER CHOSE:</h3>
-                                    <div style={{ 
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        padding: '20px', 
-                                        backgroundColor: 'rgba(244, 67, 54, 0.7)', 
-                                        border: '4px solid #000',
-                                        borderRadius: '0px',
-                                        boxShadow: '4px 4px 0 #000'
-                                    }}>
-                                        <PixelIcon choice={computerChoice} size={80} />
-                                        <div style={{
-                                            marginTop: '10px',
-                                            textTransform: 'capitalize',
-                                            fontSize: '18px',
-                                            fontWeight: 'bold',
-                                            textShadow: '1px 1px 0 #000'
-                                        }}>
-                                            {computerChoice}
-                                        </div>
-                                    </div>
+                        <h2 className="section-title">YOU CHOSE:</h2>
+                        <div className="result-container">
+                            <div className="player-choice">
+                                <h3>YOU CHOSE:</h3>
+                                <div className="choice-display">
+                                    <AnimatedPixelIcon choice={playerChoice} size={80} isSelected={true} />
+                                    <div className="choice-name">{playerChoice}</div>
                                 </div>
                             </div>
-                            <h2 style={{ 
-                                margin: '30px 0',
-                                fontSize: '32px',
-                                color: result === 'You Win!' ? '#4caf50' : result === 'Computer Wins!' ? '#f44336' : '#ff9800',
-                                textShadow: '3px 3px 0 #000',
-                                fontWeight: 'bold'
-                            }}>
-                                {result}
-                            </h2>
+                            <div className="computer-choice">
+                                <h3>COMPUTER CHOSE:</h3>
+                                <div className="choice-display">
+                                    <AnimatedPixelIcon choice={computerChoice} size={80} isSelected={true} />
+                                    <div className="choice-name">{computerChoice}</div>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginTop: '20px' }}>
-                            <button 
-                                onClick={nextRound} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#4caf50', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                        <div className="button-group">
+                            <button onClick={nextRound} className="game-button">
                                 Next Round
                             </button>
-                            <button 
-                                onClick={playAgain} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#2196f3', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
-                                Play Again
-                            </button>
-                            <button 
-                                onClick={backToMenu} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#7e57c2', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={backToMenu} className="game-button">
                                 Change Difficulty
                             </button>
                         </div>
+                        <h2 className={`result-text ${result === 'You Win!' ? 'win' : result === 'Computer Wins!' ? 'lose' : 'tie'}`}>
+                            {result}
+                        </h2>
                     </div>
                 </div>
             );
         } else if (gameState === 'gameOver') {
-            const finalResult = playerScore > computerScore ? 'You Win the Game!' : 
-                              playerScore < computerScore ? 'Computer Wins the Game!' : 
+            const finalResult = playerScore > computerScore ? 'You Win Game!' : 
+                              playerScore < computerScore ? 'Computer Wins Game!' : 
                               "It's a Tie Game!";
             
             return (
-                <div style={{
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url('https://i.pinimg.com/736x/a9/b8/cf/a9b8cf03aafc0ed58b542e03d281dd2f.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fontFamily: 'monospace',
-                    color: '#eee',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Game content with retro pixel frame */}
-                    <div style={{
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '90%',
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        backgroundColor: 'rgba(25, 25, 112, 0.85)',
-                        border: '8px solid #000',
-                        borderRadius: '0px',
-                        padding: '30px',
-                        textAlign: 'center',
-                        boxShadow: '0 0 0 4px #444, 0 0 0 8px #666',
-                        imageRendering: 'pixelated',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        {/* Pixel border decoration */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            bottom: '10px',
-                            border: '2px solid #aaa',
-                            pointerEvents: 'none'
-                        }}></div>
+                <div className="game-container game-over">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
                         
-                        <h1 style={{
-                            fontSize: '32px',
-                            marginBottom: '20px',
-                            color: '#ffcc00',
-                            textShadow: '3px 3px 0 #000',
-                            letterSpacing: '3px',
-                            fontWeight: 'bold'
-                        }}>
-                            GAME OVER
-                        </h1>
-                        <h2 style={{ 
-                            margin: '30px 0',
-                            fontSize: '32px',
-                            color: finalResult === 'You Win the Game!' ? '#4caf50' : 
-                                   finalResult === 'Computer Wins the Game!' ? '#f44336' : 
-                                   '#ff9800',
-                            textShadow: '3px 3px 0 #000',
-                            fontWeight: 'bold'
-                        }}>
+                        <h1 className="game-title">GAME OVER</h1>
+                        <h2 className={`final-result ${finalResult === 'You Win Game!' ? 'win' : finalResult === 'Computer Wins Game!' ? 'lose' : 'tie'}`}>
                             {finalResult}
                         </h2>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '50px', margin: '30px 0' }}>
+                        <div className="final-scores">
                             <div>
-                                <h3 style={{ marginBottom: '10px', textShadow: '2px 2px 0 #000' }}>FINAL SCORE</h3>
-                                <div style={{ 
-                                    padding: '20px', 
-                                    backgroundColor: 'rgba(76, 175, 80, 0.7)', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '24px',
-                                    fontWeight: 'bold',
-                                    marginTop: '10px',
-                                    boxShadow: '4px 4px 0 #000',
-                                    textShadow: '1px 1px 0 #000'
-                                }}>
+                                <h3>FINAL SCORE</h3>
+                                <div className="final-score player">
                                     PLAYER: {playerScore}
                                 </div>
                             </div>
                             <div>
-                                <h3 style={{ marginBottom: '10px', textShadow: '2px 2px 0 #000' }}>FINAL SCORE</h3>
-                                <div style={{ 
-                                    padding: '20px', 
-                                    backgroundColor: 'rgba(244, 67, 54, 0.7)', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontSize: '24px',
-                                    fontWeight: 'bold',
-                                    marginTop: '10px',
-                                    boxShadow: '4px 4px 0 #000',
-                                    textShadow: '1px 1px 0 #000'
-                                }}>
+                                <h3>FINAL SCORE</h3>
+                                <div className="final-score computer">
                                     COMPUTER: {computerScore}
                                 </div>
                             </div>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginTop: '20px' }}>
-                            <button 
-                                onClick={startNewGame} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#4caf50', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                        <div className="button-group">
+                            <button onClick={startNewGame} className="game-button">
                                 Play Again
                             </button>
-                            <button 
-                                onClick={backToMenu} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#7e57c2', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={backToMenu} className="game-button">
                                 Change Difficulty
                             </button>
-                            <button 
-                                onClick={backToRoundSelection} 
-                                style={{ 
-                                    padding: '10px 15px', 
-                                    cursor: 'pointer', 
-                                    background: '#ff5252', 
-                                    color: 'white', 
-                                    border: '4px solid #000',
-                                    borderRadius: '0px',
-                                    fontFamily: 'monospace',
-                                    boxShadow: '4px 4px 0 #000',
-                                    transition: 'all 0.1s',
-                                    textTransform: 'uppercase'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.transform = 'translate(2px, 2px)';
-                                    e.target.style.boxShadow = '2px 2px 0 #000';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.transform = 'translate(0, 0)';
-                                    e.target.style.boxShadow = '4px 4px 0 #000';
-                                }}
-                            >
+                            <button onClick={backToRoundSelection} className="game-button">
                                 Change Round Limit
                             </button>
                         </div>
