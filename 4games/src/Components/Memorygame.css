@@ -9,11 +9,12 @@
     position: relative;
 }
 
-.card > img{
+.card img{
     width: 100%;
     display: block;
     border: 2px solid #fff;
     border-radius: 10px;
+    box-shadow: 0 0 10px rgb(101, 16, 127), 0 0 20px rgb(240, 80, 216);
 }
 
 .card .front{
@@ -25,6 +26,7 @@
 .flipped .front{
     transform: rotateY(0deg);
     transition-delay: 0.2s;
+    box-shadow: 0 0 10px rgb(6, 67, 9), 0 0 20px rgb(41, 224, 38);
 }
 
 .card .back{

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './Auth.css';
-import MemoryGame from '../Components/Memorygame';
+import StartMemoryGame from '../Components/Startmemorygame';
 import QuizGame from '../Components/Quizgame';
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
       <button onClick={() => setShowComponent('quizgame')}>Quiz Game</button>
 
 			<div>
-				{showComponent === 'memorygame' && <MemoryGame />}
+				{showComponent === 'memorygame' && <StartMemoryGame />}
 			</div>
 
       <div>

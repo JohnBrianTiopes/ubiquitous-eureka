@@ -18,12 +18,15 @@ function MemoryGame(){
     const [turns, setTurns] = useState(0);
     const [choiceOne, setChoiceOne] = useState(null);
     const [choiceTwo, setChoiceTwo] = useState(null);
+    const [disabled, setDisabled] = useState(false);
 
     const shuffleCards = () => {
         const shuffledCards = [...cardImages, ...cardImages]
             .sort(() => Math.random() - 0.5)
             .map((card) => ({ ...card, id: Math.random() }))
         
+        setChoiceOne(null)
+        setChoiceTwo(null)
         setCards(shuffledCards)
         setTurns(0)
     }
@@ -32,14 +35,9 @@ function MemoryGame(){
         choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
     }
 
-    const resetTurn = () => {
-        setChoiceOne(null)
-        setChoiceTwo(null)
-        setTurns(prevTurns => prevTurns + 1)
-    }
-
     useEffect(() => {
         if (choiceOne && choiceTwo) {
+            setDisabled(true)
             if(choiceOne.src === choiceTwo.src) {
                 setCards(prevCards => {
                     return prevCards.map(card => {
@@ -57,19 +55,27 @@ function MemoryGame(){
         }
     }, [choiceOne, choiceTwo])
 
+    const resetTurn = () => {
+        setChoiceOne(null)
+        setChoiceTwo(null)
+        setTurns(prevTurns => prevTurns + 1)
+        setDisabled(false)
+    }
+
+    useEffect(() => {
+        shuffleCards()
+    }, [])
+
     return (
         <div className = "container-card">
-            <h2>Super Cutesy Memory game</h2>
-            <p>to test your Super Cutesy Memory!</p>
-            <button onClick={shuffleCards}>Start Super Cutesy game</button>
-
             <div className="card-grid">
                 {cards.map(card => (
                    <Card 
                         key={card.id} 
                         card={card} 
                         handleChoice={handleChoice}
-                        flipped={card === choiceOne || card === choiceTwo || card.matched} 
+                        flipped={card === choiceOne || card === choiceTwo || card.matched}
+                        disabled={disabled} 
                    />
                 ))}
                 <p>Turns: {turns}</p>
