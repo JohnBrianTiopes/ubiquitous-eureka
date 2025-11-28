@@ -26,7 +26,6 @@
     border-radius: 0px;
     padding: 30px;
     text-align: center;
-    box-shadow: 0 0 0 4px #444, 0 0 0 8px #666;
     image-rendering: pixelated;
     overflow-y: auto;
     display: flex;
@@ -39,7 +38,6 @@
     left: 10px;
     right: 10px;
     bottom: 10px;
-    border: 2px solid #aaa;
     pointer-events: none;
 }
 
@@ -94,6 +92,11 @@
 
 .game-button.medium {
     background: #ff9800;
+
+}
+
+.game-button.medium:hover {
+    transform: translateY(-2px); /* A different hover effect for the medium button */
 }
 
 .game-button.hard {
@@ -244,6 +247,10 @@
     border: 4px solid #000;
     border-radius: 0px;
     box-shadow: 4px 4px 0 #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .player-choice .choice-display {
@@ -327,431 +334,22 @@
     background-color: rgba(244, 67, 54, 0.7);
 }
 
-/* Animated Pixel Icon Styles - Only modified to fit in container and remove borders */
-.pixel-icon {
-    width: 80px;
-    height: 80px;
-    position: relative;
-    display: inline-block;
-    overflow: hidden; /* Ensure icons stay within bounds */
-}
+/* ========================================================================== */
+/* Emoji Icon Styles */
+/* ========================================================================== */
 
-.pixel-icon.animating {
-    transform: scale(1.1);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-/* Rock Styles - Border removed and adjusted to fit */
-.rock-base {
-    position: absolute;
-    top: 15%;
-    left: 15%;
-    width: 70%;
-    height: 60%;
-    background-color: #8B7355;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.rock-crack {
-    position: absolute;
-    background-color: #6B5A4F;
-    opacity: 0.8;
-}
-
-.rock-crack-1 {
-    top: 20%;
-    left: 25%;
-    width: 50%;
-    height: 2px;
-    border-radius: 2px;
-}
-
-.rock-crack-2 {
-    top: 40%;
-    left: 20%;
-    width: 35%;
-    height: 2px;
-    border-radius: 2px;
-}
-
-.rock-crack-3 {
-    top: 60%;
-    left: 30%;
-    width: 25%;
-    height: 2px;
-    border-radius: 2px;
-}
-
-.rock-crack-4 {
-    top: 30%;
-    left: 40%;
-    width: 20%;
-    height: 2px;
-    border-radius: 2px;
-    transform: rotate(45deg);
-}
-
-.rock-crack-5 {
-    top: 50%;
-    left: 35%;
-    width: 15%;
-    height: 2px;
-    border-radius: 2px;
-    transform: rotate(-30deg);
-}
-
-.rock-detail {
-    position: absolute;
-    background-color: #5B4A3F;
-    border-radius: 50%;
-}
-
-.rock-detail-1 {
-    top: 25%;
-    left: 60%;
-    width: 8px;
-    height: 8px;
-}
-
-.rock-detail-2 {
-    top: 50%;
-    left: 30%;
-    width: 6px;
-    height: 6px;
-}
-
-.rock-detail-3 {
-    top: 65%;
-    left: 65%;
-    width: 7px;
-    height: 7px;
-}
-
-.rock-highlight {
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent);
-    border-radius: 50%;
-    filter: blur(2px);
-    opacity: 0;
-}
-
-.pixel-icon.animating .rock-highlight {
-    opacity: 1;
-    transform: scale(1.2);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-/* Paper Styles - Border removed and adjusted to fit */
-.paper-base {
-    position: absolute;
-    top: 10%;
-    left: 15%;
-    width: 70%;
-    height: 65%;
-    background-color: #F5F5DC;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.paper-fold {
-    position: absolute;
-    background-color: rgba(211, 211, 211, 0.5);
-    height: 2px;
-}
-
-.paper-fold-1 {
-    top: 25%;
-    left: 20%;
-    width: 60%;
-}
-
-.paper-fold-2 {
-    top: 40%;
-    left: 20%;
-    width: 60%;
-}
-
-.paper-fold-3 {
-    top: 55%;
-    left: 20%;
-    width: 60%;
-}
-
-.paper-line {
-    position: absolute;
-    background-color: rgba(150, 150, 150, 0.3);
-    height: 1px;
-}
-
-.paper-line-1 {
-    top: 30%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-line-2 {
-    top: 45%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-line-3 {
-    top: 60%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-text {
-    position: absolute;
-    font-family: monospace;
-    font-size: 4px;
-    color: rgba(100, 100, 100, 0.4);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.paper-text-1 {
-    top: 30%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-text-2 {
-    top: 45%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-text-3 {
-    top: 60%;
-    left: 25%;
-    width: 50%;
-}
-
-.paper-corner {
-    position: absolute;
-    top: 10%;
-    right: 15%;
-    width: 15px;
-    height: 15px;
-    background-color: #F5F5DC;
-    transform: rotate(45deg);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.paper-highlight {
-    position: absolute;
-    top: 10%;
-    left: 15%;
-    width: 70%;
-    height: 65%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-    border-radius: 4px;
-    filter: blur(2px);
-    opacity: 0;
-}
-
-.pixel-icon.animating .paper-highlight {
-    opacity: 1;
-    transform: scale(1.2);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-/* Scissors Styles - Border removed and adjusted to fit */
-.scissors-blade {
-    position: absolute;
-    top: 25%;
-    left: 35%;
-    width: 30%;
-    height: 50%;
-    background-color: #C0C0C0;
-    border-radius: 4px 4px 2px 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.scissors-blade-1 {
-    transform: rotate(45deg);
-}
-
-.scissors-blade-2 {
-    transform: rotate(-45deg);
-}
-
-.scissors-edge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #808080;
-    border-radius: 1px;
-}
-
-.scissors-reflection {
-    position: absolute;
-    top: 10%;
-    left: 20%;
-    width: 60%;
-    height: 30%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 100%);
-    border-radius: 50%;
-    filter: blur(1px);
-}
-
-.scissors-pivot {
-    position: absolute;
-    top: 55%;
-    left: 42%;
-    width: 16%;
-    height: 16%;
-    background-color: #696969;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.scissors-pivot-center {
-    position: absolute;
-    top: 30%;
-    left: 30%;
-    width: 40%;
-    height: 40%;
-    background-color: #505050;
-    border-radius: 50%;
-}
-
-.scissors-handle {
-    position: absolute;
-    bottom: 20%;
-    left: 40%;
-    width: 20%;
-    height: 12%;
-    background-color: #696969;
-    border-radius: 8px 8px 4px 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.scissors-handle-1 {
-    transform: rotate(10deg);
-}
-
-.scissors-handle-2 {
-    transform: rotate(-10deg);
-}
-
-.scissors-handle-hole {
-    position: absolute;
-    top: 30%;
-    left: 30%;
-    width: 40%;
-    height: 40%;
-    background-color: rgba(25, 25, 112, 0.85);
-    border-radius: 50%;
-}
-
-.scissors-highlight {
-    position: absolute;
-    top: 15%;
-    left: 45%;
-    width: 10%;
-    height: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent);
-    border-radius: 50%;
-    filter: blur(2px);
-    opacity: 0;
-}
-
-.pixel-icon.animating .scissors-highlight {
-    opacity: 1;
-    transform: scale(1.2);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-.pixel-icon.animating .scissors-blade-1 {
-    transform: rotate(45deg) scale(1.1);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-.pixel-icon.animating .scissors-blade-2 {
-    transform: rotate(-45deg) scale(1.1);
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 0.540);
-}
-
-/* Animation for rock cracks when selected */
-.pixel-icon.animating .rock-crack {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .rock-crack-1 {
-    transform: translateY(-5px);
-}
-
-.pixel-icon.animating .rock-crack-2 {
-    transform: translateY(-3px);
-}
-
-.pixel-icon.animating .rock-crack-3 {
-    transform: translateY(-1px);
-}
-
-.pixel-icon.animating .rock-crack-4 {
-    transform: translateY(-2px) rotate(45deg);
-}
-
-.pixel-icon.animating .rock-crack-5 {
-    transform: translateY(-4px) rotate(-30deg);
-}
-
-/* Animation for paper folds when selected */
-.pixel-icon.animating .paper-fold-1 {
-    transform: rotate(-5deg);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .paper-fold-2 {
-    transform: rotate(5deg);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .paper-fold-3 {
-    transform: rotate(-2.5deg);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .paper-line-1 {
-    transform: translateY(-2px);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .paper-line-2 {
-    transform: translateY(-1px);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .paper-line-3 {
-    transform: translateY(-1.5px);
-    transition: transform 0.2s ease-in-out;
-}
-
-/* Animation for scissors parts when selected */
-.pixel-icon.animating .scissors-pivot {
-    transform: translateY(-3px);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .scissors-handle-1 {
-    transform: rotate(10deg) translateY(3px);
-    transition: transform 0.2s ease-in-out;
-}
-
-.pixel-icon.animating .scissors-handle-2 {
-    transform: rotate(-10deg) translateY(3px);
-    transition: transform 0.2s ease-in-out;
+.emoji-icon {
+    font-size: 80px; /* Large size for the emoji */
+    line-height: 1;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none; /* Prevents text selection on double click */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
 }
 
 /* Spock mode specific styles */
@@ -761,7 +359,7 @@
 }
 
 .rules-title {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 16px;
 }
 
@@ -784,257 +382,6 @@
     gap: 10px;
 }
 
-/* Lizard icon styles */
-.lizard-body {
-    width: 40px;
-    height: 20px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    position: relative;
-    margin: 0 auto;
-}
-
-.lizard-head {
-    width: 15px;
-    height: 15px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    position: absolute;
-    top: -5px;
-    left: -5px;
-}
-
-.lizard-tail {
-    width: 30px;
-    height: 8px;
-    background-color: #4CAF50;
-    border-radius: 4px;
-    position: absolute;
-    top: 6px;
-    right: -25px;
-    transform: rotate(-20deg);
-}
-
-.lizard-leg {
-    width: 4px;
-    height: 10px;
-    background-color: #4CAF50;
-    position: absolute;
-    border-radius: 2px;
-}
-
-.lizard-leg-1 {
-    top: 15px;
-    left: 5px;
-}
-
-.lizard-leg-2 {
-    top: 15px;
-    left: 15px;
-}
-
-.lizard-leg-3 {
-    top: 15px;
-    left: 25px;
-}
-
-.lizard-leg-4 {
-    top: 15px;
-    left: 35px;
-}
-
-.lizard-eye {
-    width: 3px;
-    height: 3px;
-    background-color: #000;
-    position: absolute;
-    border-radius: 50%;
-}
-
-.lizard-eye-1 {
-    top: 0;
-    left: -2px;
-}
-
-.lizard-eye-2 {
-    top: 0;
-    left: 2px;
-}
-
-.lizard-tongue {
-    width: 8px;
-    height: 2px;
-    background-color: #FF5252;
-    position: absolute;
-    top: 2px;
-    left: -8px;
-    transform: rotate(-10deg);
-}
-
-.lizard-pattern {
-    width: 5px;
-    height: 5px;
-    background-color: #2E7D32;
-    position: absolute;
-    border-radius: 50%;
-}
-
-.lizard-pattern-1 {
-    top: 5px;
-    left: 10px;
-}
-
-.lizard-pattern-2 {
-    top: 8px;
-    left: 20px;
-}
-
-.lizard-pattern-3 {
-    top: 5px;
-    left: 30px;
-}
-
-.lizard-highlight {
-    width: 10px;
-    height: 5px;
-    background-color: rgba(255, 255, 255, 0.5);
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    border-radius: 50%;
-}
-
-/* Spock icon styles */
-.spock-face {
-    width: 40px;
-    height: 40px;
-    background-color: #FFDBAC;
-    border-radius: 50%;
-    position: relative;
-    margin: 0 auto;
-}
-
-.spock-ear {
-    width: 10px;
-    height: 15px;
-    background-color: #FFDBAC;
-    position: absolute;
-    top: 10px;
-    border-radius: 50%;
-}
-
-.spock-ear-1 {
-    left: -8px;
-    transform: rotate(-20deg);
-}
-
-.spock-ear-2 {
-    right: -8px;
-    transform: rotate(20deg);
-}
-
-.spock-hair {
-    width: 42px;
-    height: 15px;
-    background-color: #333;
-    position: absolute;
-    top: -10px;
-    left: -1px;
-    border-radius: 50% 50% 0 0;
-}
-
-.spock-eyebrow {
-    width: 10px;
-    height: 2px;
-    background-color: #333;
-    position: absolute;
-    top: 12px;
-}
-
-.spock-eyebrow-1 {
-    left: 8px;
-}
-
-.spock-eyebrow-2 {
-    right: 8px;
-}
-
-.spock-eye {
-    width: 5px;
-    height: 5px;
-    background-color: #333;
-    position: absolute;
-    top: 15px;
-    border-radius: 50%;
-}
-
-.spock-eye-1 {
-    left: 10px;
-}
-
-.spock-eye-2 {
-    right: 10px;
-}
-
-.spock-nose {
-    width: 6px;
-    height: 8px;
-    background-color: #E6C29F;
-    position: absolute;
-    top: 20px;
-    left: 17px;
-    border-radius: 50%;
-}
-
-.spock-mouth {
-    width: 15px;
-    height: 2px;
-    background-color: #333;
-    position: absolute;
-    top: 30px;
-    left: 12.5px;
-}
-
-.spock-uniform {
-    width: 50px;
-    height: 30px;
-    background-color: #1E3A8A;
-    position: absolute;
-    top: 35px;
-    left: -5px;
-    border-radius: 5px 5px 0 0;
-}
-
-.spock-insignia {
-    width: 10px;
-    height: 10px;
-    background-color: #FFD700;
-    position: absolute;
-    top: 40px;
-    left: 15px;
-    transform: rotate(45deg);
-}
-
-.spock-hand-spock {
-    width: 15px;
-    height: 25px;
-    background-color: #FFDBAC;
-    position: absolute;
-    top: 38px;
-    right: -10px;
-    transform: rotate(30deg);
-}
-
-.spock-highlight {
-    width: 10px;
-    height: 10px;
-    background-color: rgba(255, 255, 255, 0.5);
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    border-radius: 50%;
-}
-
 /* Button styling for Spock mode */
 .game-button.spock {
     background-color: #6200EE;
@@ -1043,4 +390,88 @@
 
 .game-button.spock:hover {
     background-color: #3700B3;
+}
+
+/* ========================================================================== */
+/* Spock Introduction Screen Styles (UPDATED) */
+/* ========================================================================== */
+
+.spock-introduction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.introduction-content {
+    text-align: center;
+    margin: 5px 0;
+    max-width: 90%;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.introduction-text {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+.rules-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.rule-item {
+    padding: 8px 15px;
+    background-color: rgba(30, 58, 138, 0.7);
+    border: 2px solid #000;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 2px 2px 0 #000;
+    text-shadow: 1px 1px 0 #000;
+    display: flex;
+    align-items: center;
+}
+
+.rule-item:before {
+    content: "▶";
+    margin-right: 5px;
+    color: #ffcc00;
+}
+
+/* Video Container Styles (UPDATED) */
+.video-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.video-title {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 750px; /* Increased from 700px to expand it further to the right */
+    margin: 0 auto;
+    padding-bottom: 58%; /* Maintains 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border: 4px solid #000;
+    border-radius: 4px;
+}
+
+.rules-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }

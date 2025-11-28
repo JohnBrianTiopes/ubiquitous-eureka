@@ -35,6 +35,17 @@ const Rockpaperscissor = () => {
     
     const selectDifficulty = (level) => {
         setDifficulty(level);
+        // If Spock is selected, show the introduction first
+        if (level === 'spock') {
+            setGameState('spockIntroduction');
+        } else {
+            setGameState('playing');
+            resetGame();
+        }
+    };
+    
+    // New function to start the game after the introduction
+    const startSpockGame = () => {
         setGameState('playing');
         resetGame();
     };
@@ -754,115 +765,21 @@ const Rockpaperscissor = () => {
         setGameState('playing');
     };
     
-    // Animated Pixel Icon Component
-    const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
-        const [isAnimating, setIsAnimating] = useState(false);
-        
-        useEffect(() => {
-            if (isSelected) {
-                setIsAnimating(true);
-                const timer = setTimeout(() => {
-                    setIsAnimating(false);
-                }, 100);
-                return () => clearTimeout(timer);
-            }
-        }, [isSelected]);
-        
-        if (choice === 'rock') {
-            return (
-                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                    <div className="rock-base"></div>
-                    <div className="rock-crack rock-crack-1"></div>
-                    <div className="rock-crack rock-crack-2"></div>
-                    <div className="rock-crack rock-crack-3"></div>
-                    <div className="rock-crack rock-crack-4"></div>
-                    <div className="rock-crack rock-crack-5"></div>
-                    <div className="rock-detail rock-detail-1"></div>
-                    <div className="rock-detail rock-detail-2"></div>
-                    <div className="rock-detail rock-detail-3"></div>
-                    <div className="rock-highlight"></div>
-                </div>
-            );
-        } else if (choice === 'paper') {
-            return (
-                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                    <div className="paper-base"></div>
-                    <div className="paper-fold paper-fold-1"></div>
-                    <div className="paper-fold paper-fold-2"></div>
-                    <div className="paper-fold paper-fold-3"></div>
-                    <div className="paper-line paper-line-1"></div>
-                    <div className="paper-line paper-line-2"></div>
-                    <div className="paper-line paper-line-3"></div>
-                    <div className="paper-text paper-text-1">Lorem ipsum</div>
-                    <div className="paper-text paper-text-2">Dolor sit amet</div>
-                    <div className="paper-text paper-text-3">Consectetur</div>
-                    <div className="paper-corner"></div>
-                    <div className="paper-highlight"></div>
-                </div>
-            );
-        } else if (choice === 'scissors') {
-            return (
-                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                    <div className="scissors-blade scissors-blade-1">
-                        <div className="scissors-edge"></div>
-                        <div className="scissors-reflection"></div>
-                    </div>
-                    <div className="scissors-blade scissors-blade-2">
-                        <div className="scissors-edge"></div>
-                        <div className="scissors-reflection"></div>
-                    </div>
-                    <div className="scissors-pivot">
-                        <div className="scissors-pivot-center"></div>
-                    </div>
-                    <div className="scissors-handle scissors-handle-1">
-                        <div className="scissors-handle-hole"></div>
-                    </div>
-                    <div className="scissors-handle scissors-handle-2">
-                        <div className="scissors-handle-hole"></div>
-                    </div>
-                    <div className="scissors-highlight"></div>
-                </div>
-            );
-        } else if (choice === 'lizard') {
-            return (
-                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                    <div className="lizard-body"></div>
-                    <div className="lizard-head"></div>
-                    <div className="lizard-tail"></div>
-                    <div className="lizard-leg lizard-leg-1"></div>
-                    <div className="lizard-leg lizard-leg-2"></div>
-                    <div className="lizard-leg lizard-leg-3"></div>
-                    <div className="lizard-leg lizard-leg-4"></div>
-                    <div className="lizard-eye lizard-eye-1"></div>
-                    <div className="lizard-eye lizard-eye-2"></div>
-                    <div className="lizard-tongue"></div>
-                    <div className="lizard-pattern lizard-pattern-1"></div>
-                    <div className="lizard-pattern lizard-pattern-2"></div>
-                    <div className="lizard-pattern lizard-pattern-3"></div>
-                    <div className="lizard-highlight"></div>
-                </div>
-            );
-        } else if (choice === 'spock') {
-            return (
-                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                    <div className="spock-face"></div>
-                    <div className="spock-ear spock-ear-1"></div>
-                    <div className="spock-ear spock-ear-2"></div>
-                    <div className="spock-hair"></div>
-                    <div className="spock-eyebrow spock-eyebrow-1"></div>
-                    <div className="spock-eyebrow spock-eyebrow-2"></div>
-                    <div className="spock-eye spock-eye-1"></div>
-                    <div className="spock-eye spock-eye-2"></div>
-                    <div className="spock-nose"></div>
-                    <div className="spock-mouth"></div>
-                    <div className="spock-uniform"></div>
-                    <div className="spock-insignia"></div>
-                    <div className="spock-hand-spock"></div>
-                    <div className="spock-highlight"></div>
-                </div>
-            );
-        }
-        return null;
+    // Simplified Emoji Icon Component
+    const EmojiIcon = ({ choice }) => {
+        const choiceEmojis = {
+            rock: '✊',
+            paper: '✋',
+            scissors: '✌️',
+            lizard: '🦎',
+            spock: '🖖'
+        };
+
+        return (
+            <div className="emoji-icon">
+                {choiceEmojis[choice]}
+            </div>
+        );
     };
     
     const renderGame = () => {
@@ -930,6 +847,66 @@ const Rockpaperscissor = () => {
                     </div>
                 </div>
             );
+        } else if (gameState === 'spockIntroduction') {
+            return (
+                <div className="game-container spock-introduction">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
+                        
+                        <h1 className="game-title">ROCK PAPER SCISSORS LIZARD SPOCK</h1>
+                        <h2 className="section-title">INTRODUCTION</h2>
+                        
+                        <div className="introduction-content">
+                            <p className="introduction-text">
+                                Rock, Paper, Scissors, Lizard, Spock is a game of chance that expands the traditional game of Rock, Paper, Scissors. It is first used to settle a dispute about what to watch on TV between Sheldon and Raj in "The Lizard-Spock Expansion".
+                            </p>
+                            <p className="introduction-text">
+                                The game is an expansion on the game Rock, Paper, Scissors, with the additional hand signs of Lizard (resembling a hand puppet), and Spock (the Vulcan Salute). Each player picks a variable and reveals it at the same time. The winner is the one who defeats the others. In a tie, the process is repeated until a winner is found.
+                            </p>
+                            <p className="introduction-text">
+                                Almost always, the boys will all pick Spock at the same time and tie over and over again.
+                            </p>
+                            
+                            <h3 className="rules-title">RULES:</h3>
+                            <div className="rules-list">
+                                <div className="rule-item">Scissors cuts Paper</div>
+                                <div className="rule-item">Paper covers Rock</div>
+                                <div className="rule-item">Rock crushes Lizard</div>
+                                <div className="rule-item">Lizard poisons Spock</div>
+                                <div className="rule-item">Spock smashes Scissors</div>
+                                <div className="rule-item">Scissors decapitates Lizard</div>
+                                <div className="rule-item">Lizard eats Paper</div>
+                                <div className="rule-item">Paper disproves Spock</div>
+                                <div className="rule-item">Spock vaporizes Rock</div>
+                                <div className="rule-item">(and as it always has) Rock crushes Scissors</div>
+                            </div>
+                            
+                            <div className="video-container">
+                                <h3 className="video-title">Watch The Big Bang Theory explain the rules:</h3>
+                                <div className="video-wrapper">
+                                    <iframe 
+                                        src="https://www.youtube.com/embed/_PUEoDYpUyQ?controls=0" 
+                                        title="Rock Paper Scissors Lizard Spock" 
+                                        frameBorder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowFullScreen
+                                        className="rules-video"
+                                    ></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="button-group">
+                            <button onClick={startSpockGame} className="game-button spock">
+                                Start Game
+                            </button>
+                            <button onClick={backToMenu} className="back-button">
+                                Back to Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
         } else if (gameState === 'playing') {
             const choices = getChoices();
             const isSpockMode = difficulty === 'spock';
@@ -949,7 +926,7 @@ const Rockpaperscissor = () => {
                                 <h3 className="rules-title">Game Rules:</h3>
                                 <div className="rules-image-container">
                                     <img 
-                                        src="https://static.wikia.nocookie.net/bigbangtheory/images/7/7d/RPSLS.png/revision/latest?cb=20120822205915" 
+                                        src="https://wowo.dk/wp-content/uploads/2014/03/rockpaper2.jpg" 
                                         alt="Rock Paper Scissors Lizard Spock Rules" 
                                         className="rules-image"
                                     />
@@ -973,7 +950,7 @@ const Rockpaperscissor = () => {
                             {choices.map(choice => (
                                 <div key={choice} className="choice-container">
                                     <button onClick={() => handleChoice(choice)} className="choice-button">
-                                        <AnimatedPixelIcon choice={choice} size={isSpockMode ? 80 : 100} isSelected={false} />
+                                        <EmojiIcon choice={choice} />
                                     </button>
                                     <div className="choice-label">
                                         {choice}
@@ -1015,14 +992,14 @@ const Rockpaperscissor = () => {
                             <div className="player-choice">
                                 <h3>YOU CHOSE:</h3>
                                 <div className="choice-display">
-                                    <AnimatedPixelIcon choice={playerChoice} size={isSpockMode ? 60 : 80} isSelected={true} />
+                                    <EmojiIcon choice={playerChoice} />
                                     <div className="choice-name">{playerChoice}</div>
                                 </div>
                             </div>
                             <div className="computer-choice">
                                 <h3>COMPUTER CHOSE:</h3>
                                 <div className="choice-display">
-                                    <AnimatedPixelIcon choice={computerChoice} size={isSpockMode ? 60 : 80} isSelected={true} />
+                                    <EmojiIcon choice={computerChoice} />
                                     <div className="choice-name">{computerChoice}</div>
                                 </div>
                             </div>
