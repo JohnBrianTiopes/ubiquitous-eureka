@@ -753,3 +753,294 @@
     transform: rotate(-10deg) translateY(3px);
     transition: transform 0.2s ease-in-out;
 }
+
+/* Spock mode specific styles */
+.rules-reference {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.rules-title {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.rules-image-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.rules-image {
+    max-width: 80%;
+    max-height: 200px;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+.five-choices {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+/* Lizard icon styles */
+.lizard-body {
+    width: 40px;
+    height: 20px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+}
+
+.lizard-head {
+    width: 15px;
+    height: 15px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+}
+
+.lizard-tail {
+    width: 30px;
+    height: 8px;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    position: absolute;
+    top: 6px;
+    right: -25px;
+    transform: rotate(-20deg);
+}
+
+.lizard-leg {
+    width: 4px;
+    height: 10px;
+    background-color: #4CAF50;
+    position: absolute;
+    border-radius: 2px;
+}
+
+.lizard-leg-1 {
+    top: 15px;
+    left: 5px;
+}
+
+.lizard-leg-2 {
+    top: 15px;
+    left: 15px;
+}
+
+.lizard-leg-3 {
+    top: 15px;
+    left: 25px;
+}
+
+.lizard-leg-4 {
+    top: 15px;
+    left: 35px;
+}
+
+.lizard-eye {
+    width: 3px;
+    height: 3px;
+    background-color: #000;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.lizard-eye-1 {
+    top: 0;
+    left: -2px;
+}
+
+.lizard-eye-2 {
+    top: 0;
+    left: 2px;
+}
+
+.lizard-tongue {
+    width: 8px;
+    height: 2px;
+    background-color: #FF5252;
+    position: absolute;
+    top: 2px;
+    left: -8px;
+    transform: rotate(-10deg);
+}
+
+.lizard-pattern {
+    width: 5px;
+    height: 5px;
+    background-color: #2E7D32;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.lizard-pattern-1 {
+    top: 5px;
+    left: 10px;
+}
+
+.lizard-pattern-2 {
+    top: 8px;
+    left: 20px;
+}
+
+.lizard-pattern-3 {
+    top: 5px;
+    left: 30px;
+}
+
+.lizard-highlight {
+    width: 10px;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    border-radius: 50%;
+}
+
+/* Spock icon styles */
+.spock-face {
+    width: 40px;
+    height: 40px;
+    background-color: #FFDBAC;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+}
+
+.spock-ear {
+    width: 10px;
+    height: 15px;
+    background-color: #FFDBAC;
+    position: absolute;
+    top: 10px;
+    border-radius: 50%;
+}
+
+.spock-ear-1 {
+    left: -8px;
+    transform: rotate(-20deg);
+}
+
+.spock-ear-2 {
+    right: -8px;
+    transform: rotate(20deg);
+}
+
+.spock-hair {
+    width: 42px;
+    height: 15px;
+    background-color: #333;
+    position: absolute;
+    top: -10px;
+    left: -1px;
+    border-radius: 50% 50% 0 0;
+}
+
+.spock-eyebrow {
+    width: 10px;
+    height: 2px;
+    background-color: #333;
+    position: absolute;
+    top: 12px;
+}
+
+.spock-eyebrow-1 {
+    left: 8px;
+}
+
+.spock-eyebrow-2 {
+    right: 8px;
+}
+
+.spock-eye {
+    width: 5px;
+    height: 5px;
+    background-color: #333;
+    position: absolute;
+    top: 15px;
+    border-radius: 50%;
+}
+
+.spock-eye-1 {
+    left: 10px;
+}
+
+.spock-eye-2 {
+    right: 10px;
+}
+
+.spock-nose {
+    width: 6px;
+    height: 8px;
+    background-color: #E6C29F;
+    position: absolute;
+    top: 20px;
+    left: 17px;
+    border-radius: 50%;
+}
+
+.spock-mouth {
+    width: 15px;
+    height: 2px;
+    background-color: #333;
+    position: absolute;
+    top: 30px;
+    left: 12.5px;
+}
+
+.spock-uniform {
+    width: 50px;
+    height: 30px;
+    background-color: #1E3A8A;
+    position: absolute;
+    top: 35px;
+    left: -5px;
+    border-radius: 5px 5px 0 0;
+}
+
+.spock-insignia {
+    width: 10px;
+    height: 10px;
+    background-color: #FFD700;
+    position: absolute;
+    top: 40px;
+    left: 15px;
+    transform: rotate(45deg);
+}
+
+.spock-hand-spock {
+    width: 15px;
+    height: 25px;
+    background-color: #FFDBAC;
+    position: absolute;
+    top: 38px;
+    right: -10px;
+    transform: rotate(30deg);
+}
+
+.spock-highlight {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    border-radius: 50%;
+}
+
+/* Button styling for Spock mode */
+.game-button.spock {
+    background-color: #6200EE;
+    color: white;
+}
+
+.game-button.spock:hover {
+    background-color: #3700B3;
+}

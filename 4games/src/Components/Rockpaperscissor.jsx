@@ -20,7 +20,13 @@ const Rockpaperscissor = () => {
     const [playerPatterns, setPlayerPatterns] = useState({});
     const [lastPlayerMove, setLastPlayerMove] = useState('');
     
-    const choices = ['rock', 'paper', 'scissors'];
+    // Different choices based on game mode
+    const getChoices = () => {
+        if (difficulty === 'spock') {
+            return ['rock', 'paper', 'scissors', 'lizard', 'spock'];
+        }
+        return ['rock', 'paper', 'scissors'];
+    };
     
     const selectRoundLimit = (limit) => {
         setRoundLimit(limit);
@@ -83,7 +89,11 @@ const Rockpaperscissor = () => {
         if (playerHistory.length > 0) {
             const lastMove = playerHistory[playerHistory.length - 1];
             if (!playerPatterns[lastMove]) {
-                playerPatterns[lastMove] = { rock: 0, paper: 0, scissors: 0 };
+                const choices = getChoices();
+                playerPatterns[lastMove] = {};
+                choices.forEach(c => {
+                    playerPatterns[lastMove][c] = 0;
+                });
             }
             playerPatterns[lastMove][choice]++;
             setPlayerPatterns({...playerPatterns});
@@ -91,9 +101,11 @@ const Rockpaperscissor = () => {
     };
     
     const getComputerChoice = (level, playerChoice) => {
+        const choices = getChoices();
+        
         switch (level) {
             case 'easy':
-                return choices[Math.floor(Math.random() * 3)];
+                return choices[Math.floor(Math.random() * choices.length)];
                 
             case 'medium':
                 if (playerHistory.length > 0) {
@@ -104,7 +116,7 @@ const Rockpaperscissor = () => {
                     if (Object.keys(playerPatterns).length > 0 && Math.random() < 0.98) {
                         const lastMove = playerHistory[playerHistory.length - 1];
                         if (playerPatterns[lastMove]) {
-                            let mostLikely = 'rock';
+                            let mostLikely = choices[0];
                             let maxCount = 0;
                             
                             for (const choice in playerPatterns[lastMove]) {
@@ -125,7 +137,7 @@ const Rockpaperscissor = () => {
                             frequency[choice] = (frequency[choice] || 0) + 1;
                         });
                         
-                        let mostFrequent = 'rock';
+                        let mostFrequent = choices[0];
                         let maxCount = 0;
                         for (const choice in frequency) {
                             if (frequency[choice] > maxCount) {
@@ -144,9 +156,9 @@ const Rockpaperscissor = () => {
                                           lastThree[0] !== lastThree[2]);
                         
                         if (isRotating) {
-                            const rotationOrder = ['rock', 'paper', 'scissors'];
+                            const rotationOrder = choices;
                             const lastIndex = rotationOrder.indexOf(lastThree[2]);
-                            const nextInRotation = rotationOrder[(lastIndex + 1) % 3];
+                            const nextInRotation = rotationOrder[(lastIndex + 1) % rotationOrder.length];
                             return getCounterChoice(nextInRotation);
                         }
                     }
@@ -172,7 +184,7 @@ const Rockpaperscissor = () => {
                         return counterToOurCounter;
                     }
                 }
-                return choices[Math.floor(Math.random() * 3)];
+                return choices[Math.floor(Math.random() * choices.length)];
                 
             case 'hard':
                 if (playerHistory.length > 0) {
@@ -235,7 +247,7 @@ const Rockpaperscissor = () => {
                             frequency[choice] = (frequency[choice] || 0) + weight;
                         });
                         
-                        let mostFrequent = 'rock';
+                        let mostFrequent = choices[0];
                         let maxWeight = 0;
                         for (const choice in frequency) {
                             if (frequency[choice] > maxWeight) {
@@ -291,7 +303,7 @@ const Rockpaperscissor = () => {
                         );
                         
                         if (isCountering) {
-                            return choices[Math.floor(Math.random() * 3)];
+                            return choices[Math.floor(Math.random() * choices.length)];
                         }
                     }
                     
@@ -304,10 +316,143 @@ const Rockpaperscissor = () => {
                         }
                     }
                 }
-                return choices[Math.floor(Math.random() * 3)];
+                return choices[Math.floor(Math.random() * choices.length)];
+                
+            case 'spock':
+                // For Spock mode, we'll use a similar AI to hard mode but adapted for 5 choices
+                if (playerHistory.length > 0) {
+                    if (Math.random() < 0.99) {
+                        for (let patternLength = Math.min(playerHistory.length, 6); patternLength > 2; patternLength--) {
+                            const recentPattern = playerHistory.slice(-patternLength).join('-');
+                            const patternMatches = [];
+                            
+                            for (let j = 0; j < playerHistory.length - patternLength; j++) {
+                                if (playerHistory.slice(j, j + patternLength).join('-') === recentPattern) {
+                                    if (j + patternLength < playerHistory.length) {
+                                        patternMatches.push(playerHistory[j + patternLength]);
+                                    }
+                                }
+                            }
+                            
+                            if (patternMatches.length > 1) {
+                                const frequency = {};
+                                patternMatches.forEach(move => {
+                                    frequency[move] = (frequency[move] || 0) + 1;
+                                });
+                                
+                                let mostLikely = patternMatches[0];
+                                let maxCount = 0;
+                                for (const move in frequency) {
+                                    if (frequency[move] > maxCount) {
+                                        maxCount = frequency[move];
+                                        mostLikely = move;
+                                    }
+                                }
+                                
+                                return getCounterChoice(mostLikely);
+                            }
+                        }
+                    }
+                    
+                    if (Math.random() < 0.98) {
+                        if (computerWins > playerWins * 1.5) {
+                            return getCounterChoice(lastPlayerMove || playerChoice);
+                        } else {
+                            const prediction = getAdvancedPrediction();
+                            if (prediction) {
+                                return getCounterChoice(prediction);
+                            }
+                        }
+                    }
+                    
+                    if (Math.random() < 0.95) {
+                        const emotionalState = analyzeEmotionalState();
+                        if (emotionalState.predictedMove) {
+                            return getCounterChoice(emotionalState.predictedMove);
+                        }
+                    }
+                    
+                    if (Math.random() < 0.95) {
+                        const frequency = {};
+                        const recentMoves = playerHistory.slice(-7);
+                        recentMoves.forEach((choice, index) => {
+                            const weight = (index + 1) / recentMoves.length;
+                            frequency[choice] = (frequency[choice] || 0) + weight;
+                        });
+                        
+                        let mostFrequent = choices[0];
+                        let maxWeight = 0;
+                        for (const choice in frequency) {
+                            if (frequency[choice] > maxWeight) {
+                                maxWeight = frequency[choice];
+                                mostFrequent = choice;
+                            }
+                        }
+                        
+                        return getCounterChoice(mostFrequent);
+                    }
+                    
+                    if (playerHistory.length > 4 && Math.random() < 0.9) {
+                        const sequences = {};
+                        for (let i = 0; i < playerHistory.length - 2; i++) {
+                            const seq = playerHistory.slice(i, i + 3).join(',');
+                            if (!sequences[seq]) {
+                                sequences[seq] = [];
+                            }
+                            if (i + 3 < playerHistory.length) {
+                                sequences[seq].push(playerHistory[i + 3]);
+                            }
+                        }
+                        
+                        const recentSeq = playerHistory.slice(-3).join(',');
+                        if (sequences[recentSeq] && sequences[recentSeq].length > 0) {
+                            const freq = {};
+                            sequences[recentSeq].forEach(move => {
+                                freq[move] = (freq[move] || 0) + 1;
+                            });
+                            
+                            let mostLikely = sequences[recentSeq][0];
+                            let maxCount = 0;
+                            for (const move in freq) {
+                                if (freq[move] > maxCount) {
+                                    maxCount = freq[move];
+                                    mostLikely = move;
+                                }
+                            }
+                            
+                            return getCounterChoice(mostLikely);
+                        }
+                    }
+                    
+                    if (playerHistory.length > 3 && Math.random() < 0.85) {
+                        const ourLastMoves = [];
+                        for (let i = 1; i < Math.min(4, playerHistory.length); i++) {
+                            ourLastMoves.push(getCounterChoice(playerHistory[playerHistory.length - i]));
+                        }
+                        
+                        const playerMoveCounters = playerHistory.map(move => getCounterChoice(move));
+                        const isCountering = playerMoveCounters.some(counter => 
+                            ourLastMoves.includes(counter)
+                        );
+                        
+                        if (isCountering) {
+                            return choices[Math.floor(Math.random() * choices.length)];
+                        }
+                    }
+                    
+                    if (Math.random() < 0.8) {
+                        if (computerScore > playerScore) {
+                            const desperateMove = getCounterChoice(playerChoice);
+                            return getCounterChoice(desperateMove);
+                        } else {
+                            return getCounterChoice(lastPlayerMove || playerChoice);
+                        }
+                    }
+                }
+                return choices[Math.floor(Math.random() * choices.length)];
                 
             default:
-                return choices[Math.floor(Math.random() * 3)];
+                return choices[Math.floor(Math.random() * choices.length)];
         }
     };
     
@@ -340,6 +485,7 @@ const Rockpaperscissor = () => {
         if (playerHistory.length < 4) return { nextMove: null };
         
         const patterns = { afterWin: {}, afterLoss: {} };
+        const choices = getChoices();
         
         for (let i = 1; i < playerHistory.length; i++) {
             const prevMove = playerHistory[i - 1];
@@ -375,9 +521,13 @@ const Rockpaperscissor = () => {
         if (playerHistory.length < 3) return null;
         
         const predictions = [];
+        const choices = getChoices();
         
         const weights = [0.6, 0.3, 0.1];
-        const weightedFreq = { rock: 0, paper: 0, scissors: 0 };
+        const weightedFreq = {};
+        choices.forEach(choice => {
+            weightedFreq[choice] = 0;
+        });
         
         for (let i = 0; i < Math.min(4, playerHistory.length); i++) {
             const move = playerHistory[playerHistory.length - 1 - i];
@@ -385,7 +535,7 @@ const Rockpaperscissor = () => {
         }
         
         let maxWeight = 0;
-        let weightedPrediction = 'rock';
+        let weightedPrediction = choices[0];
         for (const move in weightedFreq) {
             if (weightedFreq[move] > maxWeight) {
                 maxWeight = weightedFreq[move];
@@ -477,30 +627,102 @@ const Rockpaperscissor = () => {
     };
     
     const getCounterChoice = (choice) => {
-        switch (choice) {
-            case 'rock':
-                return 'paper';
-            case 'paper':
-                return 'scissors';
-            case 'scissors':
-                return 'rock';
-            default:
-                return choices[Math.floor(Math.random() * 3)];
+        // For standard RPS
+        if (difficulty !== 'spock') {
+            switch (choice) {
+                case 'rock':
+                    return 'paper';
+                case 'paper':
+                    return 'scissors';
+                case 'scissors':
+                    return 'rock';
+                default:
+                    const choices = getChoices();
+                    return choices[Math.floor(Math.random() * choices.length)];
+            }
+        } 
+        // For RPSLS
+        else {
+            switch (choice) {
+                case 'rock':
+                    // Paper covers rock, Spock vaporizes rock
+                    return Math.random() < 0.5 ? 'paper' : 'spock';
+                case 'paper':
+                    // Scissors cuts paper, Lizard eats paper
+                    return Math.random() < 0.5 ? 'scissors' : 'lizard';
+                case 'scissors':
+                    // Rock crushes scissors, Spock smashes scissors
+                    return Math.random() < 0.5 ? 'rock' : 'spock';
+                case 'lizard':
+                    // Rock crushes lizard, Scissors decapitates lizard
+                    return Math.random() < 0.5 ? 'rock' : 'scissors';
+                case 'spock':
+                    // Paper disproves spock, Lizard poisons spock
+                    return Math.random() < 0.5 ? 'paper' : 'lizard';
+                default:
+                    const choices = getChoices();
+                    return choices[Math.floor(Math.random() * choices.length)];
+            }
         }
     };
     
     const determineWinner = (player, computer) => {
         if (player === computer) return "It's a Tie!";
         
-        if (
-            (player === 'rock' && computer === 'scissors') ||
-            (player === 'paper' && computer === 'rock') ||
-            (player === 'scissors' && computer === 'paper')
-        ) {
-            return 'You Win!';
+        // Standard RPS rules
+        if (difficulty !== 'spock') {
+            if (
+                (player === 'rock' && computer === 'scissors') ||
+                (player === 'paper' && computer === 'rock') ||
+                (player === 'scissors' && computer === 'paper')
+            ) {
+                return 'You Win!';
+            }
+            
+            return 'Computer Wins!';
+        } 
+        // RPSLS rules
+        else {
+            // Scissors cuts Paper
+            if (player === 'scissors' && computer === 'paper') return 'You Win!';
+            if (player === 'paper' && computer === 'scissors') return 'Computer Wins!';
+            
+            // Paper covers Rock
+            if (player === 'paper' && computer === 'rock') return 'You Win!';
+            if (player === 'rock' && computer === 'paper') return 'Computer Wins!';
+            
+            // Rock crushes Lizard
+            if (player === 'rock' && computer === 'lizard') return 'You Win!';
+            if (player === 'lizard' && computer === 'rock') return 'Computer Wins!';
+            
+            // Lizard poisons Spock
+            if (player === 'lizard' && computer === 'spock') return 'You Win!';
+            if (player === 'spock' && computer === 'lizard') return 'Computer Wins!';
+            
+            // Spock smashes Scissors
+            if (player === 'spock' && computer === 'scissors') return 'You Win!';
+            if (player === 'scissors' && computer === 'spock') return 'Computer Wins!';
+            
+            // Scissors decapitates Lizard
+            if (player === 'scissors' && computer === 'lizard') return 'You Win!';
+            if (player === 'lizard' && computer === 'scissors') return 'Computer Wins!';
+            
+            // Lizard eats Paper
+            if (player === 'lizard' && computer === 'paper') return 'You Win!';
+            if (player === 'paper' && computer === 'lizard') return 'Computer Wins!';
+            
+            // Paper disproves Spock
+            if (player === 'paper' && computer === 'spock') return 'You Win!';
+            if (player === 'spock' && computer === 'paper') return 'Computer Wins!';
+            
+            // Spock vaporizes Rock
+            if (player === 'spock' && computer === 'rock') return 'You Win!';
+            if (player === 'rock' && computer === 'spock') return 'Computer Wins!';
+            
+            // Rock crushes Scissors
+            if (player === 'rock' && computer === 'scissors') return 'You Win!';
+            if (player === 'scissors' && computer === 'rock') return 'Computer Wins!';
         }
-        
-        return 'Computer Wins!';
     };
     
     const playAgain = () => {
@@ -527,78 +749,121 @@ const Rockpaperscissor = () => {
         resetGame();
     };
     
+    const startNewGame = () => {
+        resetGame();
+        setGameState('playing');
+    };
+    
     // Animated Pixel Icon Component
-const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
-    const [isAnimating, setIsAnimating] = useState(false);
-    
-    useEffect(() => {
-        if (isSelected) {
-            setIsAnimating(true);
-            const timer = setTimeout(() => {
-                setIsAnimating(false);
-            }, 100);
-            return () => clearTimeout(timer);
+    const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
+        const [isAnimating, setIsAnimating] = useState(false);
+        
+        useEffect(() => {
+            if (isSelected) {
+                setIsAnimating(true);
+                const timer = setTimeout(() => {
+                    setIsAnimating(false);
+                }, 100);
+                return () => clearTimeout(timer);
+            }
+        }, [isSelected]);
+        
+        if (choice === 'rock') {
+            return (
+                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                    <div className="rock-base"></div>
+                    <div className="rock-crack rock-crack-1"></div>
+                    <div className="rock-crack rock-crack-2"></div>
+                    <div className="rock-crack rock-crack-3"></div>
+                    <div className="rock-crack rock-crack-4"></div>
+                    <div className="rock-crack rock-crack-5"></div>
+                    <div className="rock-detail rock-detail-1"></div>
+                    <div className="rock-detail rock-detail-2"></div>
+                    <div className="rock-detail rock-detail-3"></div>
+                    <div className="rock-highlight"></div>
+                </div>
+            );
+        } else if (choice === 'paper') {
+            return (
+                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                    <div className="paper-base"></div>
+                    <div className="paper-fold paper-fold-1"></div>
+                    <div className="paper-fold paper-fold-2"></div>
+                    <div className="paper-fold paper-fold-3"></div>
+                    <div className="paper-line paper-line-1"></div>
+                    <div className="paper-line paper-line-2"></div>
+                    <div className="paper-line paper-line-3"></div>
+                    <div className="paper-text paper-text-1">Lorem ipsum</div>
+                    <div className="paper-text paper-text-2">Dolor sit amet</div>
+                    <div className="paper-text paper-text-3">Consectetur</div>
+                    <div className="paper-corner"></div>
+                    <div className="paper-highlight"></div>
+                </div>
+            );
+        } else if (choice === 'scissors') {
+            return (
+                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                    <div className="scissors-blade scissors-blade-1">
+                        <div className="scissors-edge"></div>
+                        <div className="scissors-reflection"></div>
+                    </div>
+                    <div className="scissors-blade scissors-blade-2">
+                        <div className="scissors-edge"></div>
+                        <div className="scissors-reflection"></div>
+                    </div>
+                    <div className="scissors-pivot">
+                        <div className="scissors-pivot-center"></div>
+                    </div>
+                    <div className="scissors-handle scissors-handle-1">
+                        <div className="scissors-handle-hole"></div>
+                    </div>
+                    <div className="scissors-handle scissors-handle-2">
+                        <div className="scissors-handle-hole"></div>
+                    </div>
+                    <div className="scissors-highlight"></div>
+                </div>
+            );
+        } else if (choice === 'lizard') {
+            return (
+                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                    <div className="lizard-body"></div>
+                    <div className="lizard-head"></div>
+                    <div className="lizard-tail"></div>
+                    <div className="lizard-leg lizard-leg-1"></div>
+                    <div className="lizard-leg lizard-leg-2"></div>
+                    <div className="lizard-leg lizard-leg-3"></div>
+                    <div className="lizard-leg lizard-leg-4"></div>
+                    <div className="lizard-eye lizard-eye-1"></div>
+                    <div className="lizard-eye lizard-eye-2"></div>
+                    <div className="lizard-tongue"></div>
+                    <div className="lizard-pattern lizard-pattern-1"></div>
+                    <div className="lizard-pattern lizard-pattern-2"></div>
+                    <div className="lizard-pattern lizard-pattern-3"></div>
+                    <div className="lizard-highlight"></div>
+                </div>
+            );
+        } else if (choice === 'spock') {
+            return (
+                <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
+                    <div className="spock-face"></div>
+                    <div className="spock-ear spock-ear-1"></div>
+                    <div className="spock-ear spock-ear-2"></div>
+                    <div className="spock-hair"></div>
+                    <div className="spock-eyebrow spock-eyebrow-1"></div>
+                    <div className="spock-eyebrow spock-eyebrow-2"></div>
+                    <div className="spock-eye spock-eye-1"></div>
+                    <div className="spock-eye spock-eye-2"></div>
+                    <div className="spock-nose"></div>
+                    <div className="spock-mouth"></div>
+                    <div className="spock-uniform"></div>
+                    <div className="spock-insignia"></div>
+                    <div className="spock-hand-spock"></div>
+                    <div className="spock-highlight"></div>
+                </div>
+            );
         }
-    }, [isSelected]);
-    
-    if (choice === 'rock') {
-        return (
-            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                <div className="rock-base"></div>
-                <div className="rock-crack rock-crack-1"></div>
-                <div className="rock-crack rock-crack-2"></div>
-                <div className="rock-crack rock-crack-3"></div>
-                <div className="rock-crack rock-crack-4"></div>
-                <div className="rock-crack rock-crack-5"></div>
-                <div className="rock-detail rock-detail-1"></div>
-                <div className="rock-detail rock-detail-2"></div>
-                <div className="rock-detail rock-detail-3"></div>
-                <div className="rock-highlight"></div>
-            </div>
-        );
-    } else if (choice === 'paper') {
-        return (
-            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                <div className="paper-base"></div>
-                <div className="paper-fold paper-fold-1"></div>
-                <div className="paper-fold paper-fold-2"></div>
-                <div className="paper-fold paper-fold-3"></div>
-                <div className="paper-line paper-line-1"></div>
-                <div className="paper-line paper-line-2"></div>
-                <div className="paper-line paper-line-3"></div>
-                <div className="paper-text paper-text-1">Lorem ipsum</div>
-                <div className="paper-text paper-text-2">Dolor sit amet</div>
-                <div className="paper-text paper-text-3">Consectetur</div>
-                <div className="paper-corner"></div>
-                <div className="paper-highlight"></div>
-            </div>
-        );
-    } else if (choice === 'scissors') {
-        return (
-            <div className={`pixel-icon ${isAnimating ? 'animating' : ''}`}>
-                <div className="scissors-blade scissors-blade-1">
-                    <div className="scissors-edge"></div>
-                    <div className="scissors-reflection"></div>
-                </div>
-                <div className="scissors-blade scissors-blade-2">
-                    <div className="scissors-edge"></div>
-                    <div className="scissors-reflection"></div>
-                </div>
-                <div className="scissors-pivot">
-                    <div className="scissors-pivot-center"></div>
-                </div>
-                <div className="scissors-handle scissors-handle-1">
-                    <div className="scissors-handle-hole"></div>
-                </div>
-                <div className="scissors-handle scissors-handle-2">
-                    <div className="scissors-handle-hole"></div>
-                </div>
-                <div className="scissors-highlight"></div>
-            </div>
-        );
-    }
-    return null;
-};
+        return null;
+    };
     
     const renderGame = () => {
         if (gameState === 'roundSelection') {
@@ -650,6 +915,9 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                             <button onClick={() => selectDifficulty('hard')} className="game-button hard">
                                 Hard
                             </button>
+                            <button onClick={() => selectDifficulty('spock')} className="game-button spock">
+                                Spock
+                            </button>
                         </div>
                         <div className="button-group secondary">
                             <button onClick={backToRoundSelection} className="secondary-button">
@@ -663,15 +931,32 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                 </div>
             );
         } else if (gameState === 'playing') {
+            const choices = getChoices();
+            const isSpockMode = difficulty === 'spock';
+            
             return (
                 <div className="game-container playing">
                     <div className="game-frame">
                         <div className="pixel-border"></div>
                         
-                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h1 className="game-title">{isSpockMode ? 'ROCK PAPER SCISSORS LIZARD SPOCK' : 'ROCK PAPER SCISSORS'}</h1>
                         <h2 className="section-title">
                             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} MODE
                         </h2>
+                        
+                        {isSpockMode && (
+                            <div className="rules-reference">
+                                <h3 className="rules-title">Game Rules:</h3>
+                                <div className="rules-image-container">
+                                    <img 
+                                        src="https://static.wikia.nocookie.net/bigbangtheory/images/7/7d/RPSLS.png/revision/latest?cb=20120822205915" 
+                                        alt="Rock Paper Scissors Lizard Spock Rules" 
+                                        className="rules-image"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        
                         <div className="score-container">
                             <div className="score-box player-score">
                                 <h3>PLAYER: {playerScore}</h3>
@@ -684,11 +969,11 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                             </div>
                         </div>
                         <h2 className="section-title">MAKE YOUR CHOICE:</h2>
-                        <div className="choices-container">
+                        <div className={`choices-container ${isSpockMode ? 'five-choices' : ''}`}>
                             {choices.map(choice => (
                                 <div key={choice} className="choice-container">
                                     <button onClick={() => handleChoice(choice)} className="choice-button">
-                                        <AnimatedPixelIcon choice={choice} size={100} isSelected={false} />
+                                        <AnimatedPixelIcon choice={choice} size={isSpockMode ? 80 : 100} isSelected={false} />
                                     </button>
                                     <div className="choice-label">
                                         {choice}
@@ -703,12 +988,14 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                 </div>
             );
         } else if (gameState === 'result') {
+            const isSpockMode = difficulty === 'spock';
+            
             return (
                 <div className="game-container result">
                     <div className="game-frame">
                         <div className="pixel-border"></div>
                         
-                        <h1 className="game-title">ROCK PAPER SCISSORS</h1>
+                        <h1 className="game-title">{isSpockMode ? 'ROCK PAPER SCISSORS LIZARD SPOCK' : 'ROCK PAPER SCISSORS'}</h1>
                         <h2 className="section-title">
                             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} MODE
                         </h2>
@@ -728,14 +1015,14 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                             <div className="player-choice">
                                 <h3>YOU CHOSE:</h3>
                                 <div className="choice-display">
-                                    <AnimatedPixelIcon choice={playerChoice} size={80} isSelected={true} />
+                                    <AnimatedPixelIcon choice={playerChoice} size={isSpockMode ? 60 : 80} isSelected={true} />
                                     <div className="choice-name">{playerChoice}</div>
                                 </div>
                             </div>
                             <div className="computer-choice">
                                 <h3>COMPUTER CHOSE:</h3>
                                 <div className="choice-display">
-                                    <AnimatedPixelIcon choice={computerChoice} size={80} isSelected={true} />
+                                    <AnimatedPixelIcon choice={computerChoice} size={isSpockMode ? 60 : 80} isSelected={true} />
                                     <div className="choice-name">{computerChoice}</div>
                                 </div>
                             </div>
@@ -755,6 +1042,7 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                 </div>
             );
         } else if (gameState === 'gameOver') {
+            const isSpockMode = difficulty === 'spock';
             const finalResult = playerScore > computerScore ? 'You Win Game!' : 
                               playerScore < computerScore ? 'Computer Wins Game!' : 
                               "It's a Tie Game!";
@@ -764,7 +1052,7 @@ const AnimatedPixelIcon = ({ choice, size = 80, isSelected = false }) => {
                     <div className="game-frame">
                         <div className="pixel-border"></div>
                         
-                        <h1 className="game-title">GAME OVER</h1>
+                        <h1 className="game-title">{isSpockMode ? 'ROCK PAPER SCISSORS LIZARD SPOCK' : 'ROCK PAPER SCISSORS'}</h1>
                         <h2 className={`final-result ${finalResult === 'You Win Game!' ? 'win' : finalResult === 'Computer Wins Game!' ? 'lose' : 'tie'}`}>
                             {finalResult}
                         </h2>
