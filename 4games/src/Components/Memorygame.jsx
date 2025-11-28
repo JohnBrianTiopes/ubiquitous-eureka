@@ -23,6 +23,7 @@ function MemoryGame(){
 
     const startGame = () => {
         setStart(true)
+        setDisabled(true)
     }
 
     const shuffleCards = () => {
@@ -73,7 +74,8 @@ function MemoryGame(){
 
     return (
         <div className = "container-card">
-            <h2> Super </h2>
+            <h2 style={{textAlign:'center', marginTop: '50px'}}> Super cutesy game </h2>
+            <p style={{textAlign:'center'}}>To test your super cutesy memory! </p>
             <div className="card-grid">
                 {cards.map(card => (
                    <Card 
