@@ -30,6 +30,14 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.game-frame::-webkit-scrollbar {
+    display: none;
 }
 
 .pixel-border {
@@ -409,13 +417,21 @@
     max-width: 90%;
     overflow-y: auto;
     max-height: 60vh;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.introduction-content::-webkit-scrollbar {
+    display: none;
 }
 
 .introduction-text {
     font-size: 16px;
     line-height: 1.5;
     margin-bottom: 15px;
-    text-align: justify;
+    text-align: center; /* Changed from justify to center */
 }
 
 .rules-list {
@@ -429,7 +445,7 @@
     padding: 8px 15px;
     background-color: rgba(30, 58, 138, 0.7);
     border: 2px solid #000;
-    border-radius: 4px;
+    border-radius: 10px;
     font-size: 14px;
     box-shadow: 2px 2px 0 #000;
     text-shadow: 1px 1px 0 #000;
@@ -459,7 +475,7 @@
 .video-wrapper {
     position: relative;
     width: 100%;
-    max-width: 750px; /* Increased from 700px to expand it further to the right */
+    max-width: 600px; /* Increased from 700px to expand it further to the right */
     margin: 0 auto;
     padding-bottom: 58%; /* Maintains 16:9 aspect ratio */
     height: 0;
@@ -474,4 +490,112 @@
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+/* ========================================================================== */
+/* Leaderboard Styles */
+/* ========================================================================== */
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaderboard-table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    font-family: monospace;
+}
+
+.table-header {
+    display: flex;
+    background-color: rgba(30, 58, 138, 0.7);
+    border: 2px solid #000;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.table-row {
+    display: flex;
+    background-color: rgba(25, 25, 112, 0.5);
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.table-row:nth-child(even) {
+    background-color: rgba(30, 58, 138, 0.3);
+}
+
+.table-cell {
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #333;
+}
+
+.table-cell:last-child {
+    border-right: none;
+}
+
+.rank {
+    flex: 0.5;
+}
+
+.player { /* New style for the Player column */
+    flex: 1.5;
+    text-align: left; /* Align usernames to the left */
+    padding-left: 15px; /* Add some padding */
+}
+
+.date {
+    flex: 1;
+}
+
+.difficulty {
+    flex: 1;
+}
+
+.rounds {
+    flex: 0.5;
+}
+
+.score {
+    flex: 1;
+}
+
+.result {
+    flex: 0.5;
+    font-weight: bold;
+}
+
+.result.win {
+    color: #4caf50;
+}
+
+.result.loss {
+    color: #f44336;
+}
+
+.result.tie {
+    color: #ff9800;
+}
+
+.no-scores {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 18px;
+    color: #ddd;
+}
+
+.danger {
+    background-color: #f44336 !important;
+}
+
+.danger:hover {
+    background-color: #d32f2f !important;
 }

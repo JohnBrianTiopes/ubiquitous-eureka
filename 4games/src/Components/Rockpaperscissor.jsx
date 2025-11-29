@@ -20,6 +20,74 @@ const Rockpaperscissor = () => {
     const [playerPatterns, setPlayerPatterns] = useState({});
     const [lastPlayerMove, setLastPlayerMove] = useState('');
     
+    // New state for the currently logged-in user
+    const [currentUser, setCurrentUser] = useState(null);
+
+    // New state for leaderboard
+    const [leaderboard, setLeaderboard] = useState(() => {
+        // Load leaderboard from localStorage if available
+        const savedLeaderboard = localStorage.getItem('rpsLeaderboard');
+        return savedLeaderboard ? JSON.parse(savedLeaderboard) : [];
+    });
+
+    // Effect to get the current user from localStorage on component mount
+    useEffect(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            setCurrentUser(JSON.parse(user));
+        }
+    }, []);
+    
+    // Save leaderboard to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('rpsLeaderboard', JSON.stringify(leaderboard));
+    }, [leaderboard]);
+    
+    // Save to leaderboard when game is over
+    useEffect(() => {
+        if (gameState === 'gameOver') {
+            saveToLeaderboard();
+        }
+    }, [gameState]);
+    
+    // Updated function to save game result to leaderboard
+    const saveToLeaderboard = () => {
+        // Only save if a user is logged in
+        if (!currentUser) {
+            console.log("Guest score not saved.");
+            return;
+        }
+
+        const gameResult = {
+            id: Date.now(),
+            userId: currentUser.userId, // Add userId
+            username: currentUser.username, // Add username
+            date: new Date().toLocaleDateString(),
+            difficulty: difficulty,
+            rounds: rounds,
+            playerScore: playerScore,
+            computerScore: computerScore,
+            result: playerScore > computerScore ? 'Win' : playerScore < computerScore ? 'Loss' : 'Tie'
+        };
+        
+        const newLeaderboard = [...leaderboard, gameResult];
+        // Sort by player score (descending) and then by date (most recent first)
+        newLeaderboard.sort((a, b) => {
+            if (a.playerScore !== b.playerScore) {
+                return b.playerScore - a.playerScore;
+            }
+            return new Date(b.date) - new Date(a.date);
+        });
+        
+        // Keep only top 10 scores
+        setLeaderboard(newLeaderboard.slice(0, 10));
+    };
+    
+    // New function to clear the leaderboard
+    const clearLeaderboard = () => {
+        setLeaderboard([]);
+    };
+    
     // Different choices based on game mode
     const getChoices = () => {
         if (difficulty === 'spock') {
@@ -805,9 +873,14 @@ const Rockpaperscissor = () => {
                                 Unlimited
                             </button>
                         </div>
-                        <button onClick={() => navigate('/home')} className="back-button">
-                            Back to Home
-                        </button>
+                        <div className="button-group secondary">
+                            <button onClick={() => setGameState('leaderboard')} className="secondary-button">
+                                View Leaderboard
+                            </button>
+                            <button onClick={() => navigate('/home')} className="secondary-button">
+                                Back to Home
+                            </button>
+                        </div>
                     </div>
                 </div>
             );
@@ -837,6 +910,9 @@ const Rockpaperscissor = () => {
                             </button>
                         </div>
                         <div className="button-group secondary">
+                            <button onClick={() => setGameState('leaderboard')} className="secondary-button">
+                                View Leaderboard
+                            </button>
                             <button onClick={backToRoundSelection} className="secondary-button">
                                 Change Round Limit
                             </button>
@@ -858,13 +934,10 @@ const Rockpaperscissor = () => {
                         
                         <div className="introduction-content">
                             <p className="introduction-text">
-                                Rock, Paper, Scissors, Lizard, Spock is a game of chance that expands the traditional game of Rock, Paper, Scissors. It is first used to settle a dispute about what to watch on TV between Sheldon and Raj in "The Lizard-Spock Expansion".
+                                Rock, Paper, Scissors, Lizard, Spock is a game of chance that expands the traditional game of Rock, Paper, Scissors. It is first used to settle a dispute about what to watch on TV between Sheldon and Raj in "The Lizard-Spock Extension".
                             </p>
                             <p className="introduction-text">
                                 The game is an expansion on the game Rock, Paper, Scissors, with the additional hand signs of Lizard (resembling a hand puppet), and Spock (the Vulcan Salute). Each player picks a variable and reveals it at the same time. The winner is the one who defeats the others. In a tie, the process is repeated until a winner is found.
-                            </p>
-                            <p className="introduction-text">
-                                Almost always, the boys will all pick Spock at the same time and tie over and over again.
                             </p>
                             
                             <h3 className="rules-title">RULES:</h3>
@@ -1051,12 +1124,65 @@ const Rockpaperscissor = () => {
                             <button onClick={startNewGame} className="game-button">
                                 Play Again
                             </button>
+                            <button onClick={() => setGameState('leaderboard')} className="game-button">
+                                View Leaderboard
+                            </button>
                             <button onClick={backToMenu} className="game-button">
                                 Change Difficulty
                             </button>
                             <button onClick={backToRoundSelection} className="game-button">
                                 Change Round Limit
                             </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        } else if (gameState === 'leaderboard') {
+            return (
+                <div className="game-container leaderboard">
+                    <div className="game-frame">
+                        <div className="pixel-border"></div>
+                        
+                        <h1 className="game-title">LEADERBOARD</h1>
+                        
+                        {leaderboard.length === 0 ? (
+                            <div className="no-scores">
+                                <p>No scores yet. Play a game to get on the leaderboard!</p>
+                            </div>
+                        ) : (
+                            <div className="leaderboard-table">
+                                <div className="table-header">
+                                    <div className="table-cell rank">Rank</div>
+                                    <div className="table-cell player">Player</div>
+                                    <div className="table-cell date">Date</div>
+                                    <div className="table-cell difficulty">Difficulty</div>
+                                    <div className="table-cell rounds">Rounds</div>
+                                    <div className="table-cell score">Score</div>
+                                    <div className="table-cell result">Result</div>
+                                </div>
+                                {leaderboard.map((entry, index) => (
+                                    <div key={entry.id} className="table-row">
+                                        <div className="table-cell rank">{index + 1}</div>
+                                        <div className="table-cell player">{entry.username}</div>
+                                        <div className="table-cell date">{entry.date}</div>
+                                        <div className="table-cell difficulty">{entry.difficulty}</div>
+                                        <div className="table-cell rounds">{entry.rounds}</div>
+                                        <div className="table-cell score">{entry.playerScore} - {entry.computerScore}</div>
+                                        <div className={`table-cell result ${entry.result.toLowerCase()}`}>{entry.result}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        
+                        <div className="button-group">
+                            <button onClick={backToMenu} className="game-button">
+                                Back to Menu
+                            </button>
+                            {leaderboard.length > 0 && (
+                                <button onClick={clearLeaderboard} className="game-button danger">
+                                    Clear Leaderboard
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
