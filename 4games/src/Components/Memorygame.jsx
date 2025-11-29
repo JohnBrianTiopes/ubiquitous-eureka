@@ -13,18 +13,16 @@ const cardImages = [
     {"src": "/images/08.png", matched: false}
 ]
 
+const levels = {
+    lvl1 : {}
+}
+
 function MemoryGame(){
     const [cards, setCards] = useState([]);
     const [turns, setTurns] = useState(0);
     const [choiceOne, setChoiceOne] = useState(null);
     const [choiceTwo, setChoiceTwo] = useState(null);
     const [disabled, setDisabled] = useState(false);
-    const [start, setStart] = useState(false);
-
-    const startGame = () => {
-        setStart(true)
-        setDisabled(true)
-    }
 
     const shuffleCards = () => {
         const shuffledCards = [...cardImages, ...cardImages]
@@ -74,8 +72,12 @@ function MemoryGame(){
 
     return (
         <div className = "container-card">
-            <h2 style={{textAlign:'center', marginTop: '50px'}}> Super cutesy game </h2>
+            <h2 style={{textAlign:'center', marginTop: '50px'}}> Super cutesy memory game </h2>
             <p style={{textAlign:'center'}}>To test your super cutesy memory! </p>
+            <button 
+                onClick={shuffleCards}
+                >Restart</button>
+            <button>Click for a cute song to help you concentrate!</button>
             <div className="card-grid">
                 {cards.map(card => (
                    <Card 
@@ -84,7 +86,6 @@ function MemoryGame(){
                         handleChoice={handleChoice}
                         flipped={card === choiceOne || card === choiceTwo || card.matched}
                         disabled={disabled} 
-                        start={start}
                    />
                 ))}
                 <p>Turns: {turns}</p>

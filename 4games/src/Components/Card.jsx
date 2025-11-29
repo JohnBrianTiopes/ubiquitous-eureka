@@ -1,7 +1,7 @@
 import React from 'react'
 import './Memorygame.css';
 
-export default function Card({card, handleChoice, flipped, disabled, start}) {
+export default function Card({card, handleChoice, flipped, disabled}) {
 
     const handleClick = () => {
         if (!disabled) {
