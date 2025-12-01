@@ -30,6 +30,7 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    align-items: center; /* Added to ensure content is centered */
     /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
@@ -431,18 +432,18 @@
     font-size: 16px;
     line-height: 1.5;
     margin-bottom: 15px;
-    text-align: center; /* Changed from justify to center */
+    text-align: center;
 }
 
 .rules-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin: 15px 0;
+    margin: 10px 0;
 }
 
 .rule-item {
-    padding: 8px 15px;
+    padding: 8px 10px;
     background-color: rgba(30, 58, 138, 0.7);
     border: 2px solid #000;
     border-radius: 10px;
@@ -455,7 +456,7 @@
 
 .rule-item:before {
     content: "▶";
-    margin-right: 5px;
+    margin-right: 0px;
     color: #ffcc00;
 }
 
@@ -463,6 +464,9 @@
 .video-container {
     margin: 20px 0;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .video-title {
@@ -475,13 +479,14 @@
 .video-wrapper {
     position: relative;
     width: 100%;
-    max-width: 600px; /* Increased from 700px to expand it further to the right */
+    max-width: 600px; /* Increased size for better visibility */
     margin: 0 auto;
-    padding-bottom: 58%; /* Maintains 16:9 aspect ratio */
+    padding-bottom: 56.25%; /* Standard 16:9 aspect ratio */
     height: 0;
     overflow: hidden;
     border: 4px solid #000;
     border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .rules-video {
