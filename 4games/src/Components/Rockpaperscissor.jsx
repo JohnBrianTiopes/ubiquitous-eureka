@@ -179,6 +179,142 @@ const Rockpaperscissor = () => {
         }
     };
     
+    // Advanced AI logic shared between 'hard' and 'spock' modes
+    const getAdvancedComputerChoice = (playerChoice) => {
+        const choices = getChoices();
+        
+        if (playerHistory.length > 0) {
+            if (Math.random() < 0.99) {
+                for (let patternLength = Math.min(playerHistory.length, 6); patternLength > 2; patternLength--) {
+                    const recentPattern = playerHistory.slice(-patternLength).join('-');
+                    const patternMatches = [];
+                    
+                    for (let j = 0; j < playerHistory.length - patternLength; j++) {
+                        if (playerHistory.slice(j, j + patternLength).join('-') === recentPattern) {
+                            if (j + patternLength < playerHistory.length) {
+                                patternMatches.push(playerHistory[j + patternLength]);
+                            }
+                        }
+                    }
+                    
+                    if (patternMatches.length > 1) {
+                        const frequency = {};
+                        patternMatches.forEach(move => {
+                            frequency[move] = (frequency[move] || 0) + 1;
+                        });
+                        
+                        let mostLikely = patternMatches[0];
+                        let maxCount = 0;
+                        for (const move in frequency) {
+                            if (frequency[move] > maxCount) {
+                                maxCount = frequency[move];
+                                mostLikely = move;
+                            }
+                        }
+                        
+                        return getCounterChoice(mostLikely);
+                    }
+                }
+            }
+            
+            if (Math.random() < 0.98) {
+                if (computerWins > playerWins * 1.5) {
+                    return getCounterChoice(lastPlayerMove || playerChoice);
+                } else {
+                    const prediction = getAdvancedPrediction();
+                    if (prediction) {
+                        return getCounterChoice(prediction);
+                    }
+                }
+            }
+            
+            if (Math.random() < 0.95) {
+                const emotionalState = analyzeEmotionalState();
+                if (emotionalState.predictedMove) {
+                    return getCounterChoice(emotionalState.predictedMove);
+                }
+            }
+            
+            if (Math.random() < 0.95) {
+                const frequency = {};
+                const recentMoves = playerHistory.slice(-7);
+                recentMoves.forEach((choice, index) => {
+                    const weight = (index + 1) / recentMoves.length;
+                    frequency[choice] = (frequency[choice] || 0) + weight;
+                });
+                
+                let mostFrequent = choices[0];
+                let maxWeight = 0;
+                for (const choice in frequency) {
+                    if (frequency[choice] > maxWeight) {
+                        maxWeight = frequency[choice];
+                        mostFrequent = choice;
+                    }
+                }
+                
+                return getCounterChoice(mostFrequent);
+            }
+            
+            if (playerHistory.length > 4 && Math.random() < 0.9) {
+                const sequences = {};
+                for (let i = 0; i < playerHistory.length - 2; i++) {
+                    const seq = playerHistory.slice(i, i + 3).join(',');
+                    if (!sequences[seq]) {
+                        sequences[seq] = [];
+                    }
+                    if (i + 3 < playerHistory.length) {
+                        sequences[seq].push(playerHistory[i + 3]);
+                    }
+                }
+                
+                const recentSeq = playerHistory.slice(-3).join(',');
+                if (sequences[recentSeq] && sequences[recentSeq].length > 0) {
+                    const freq = {};
+                    sequences[recentSeq].forEach(move => {
+                        freq[move] = (freq[move] || 0) + 1;
+                    });
+                    
+                    let mostLikely = sequences[recentSeq][0];
+                    let maxCount = 0;
+                    for (const move in freq) {
+                        if (freq[move] > maxCount) {
+                            maxCount = freq[move];
+                            mostLikely = move;
+                        }
+                    }
+                    
+                    return getCounterChoice(mostLikely);
+                }
+            }
+            
+            if (playerHistory.length > 3 && Math.random() < 0.85) {
+                const ourLastMoves = [];
+                for (let i = 1; i < Math.min(4, playerHistory.length); i++) {
+                    ourLastMoves.push(getCounterChoice(playerHistory[playerHistory.length - i]));
+                }
+                
+                const playerMoveCounters = playerHistory.map(move => getCounterChoice(move));
+                const isCountering = playerMoveCounters.some(counter => 
+                    ourLastMoves.includes(counter)
+                );
+                
+                if (isCountering) {
+                    return choices[Math.floor(Math.random() * choices.length)];
+                }
+            }
+            
+            if (Math.random() < 0.8) {
+                if (computerScore > playerScore) {
+                    const desperateMove = getCounterChoice(playerChoice);
+                    return getCounterChoice(desperateMove);
+                } else {
+                    return getCounterChoice(lastPlayerMove || playerChoice);
+                }
+            }
+        }
+        return choices[Math.floor(Math.random() * choices.length)];
+    };
+    
     const getComputerChoice = (level, playerChoice) => {
         const choices = getChoices();
         
@@ -266,269 +402,9 @@ const Rockpaperscissor = () => {
                 return choices[Math.floor(Math.random() * choices.length)];
                 
             case 'hard':
-                if (playerHistory.length > 0) {
-                    if (Math.random() < 0.99) {
-                        for (let patternLength = Math.min(playerHistory.length, 6); patternLength > 2; patternLength--) {
-                            const recentPattern = playerHistory.slice(-patternLength).join('-');
-                            const patternMatches = [];
-                            
-                            for (let j = 0; j < playerHistory.length - patternLength; j++) {
-                                if (playerHistory.slice(j, j + patternLength).join('-') === recentPattern) {
-                                    if (j + patternLength < playerHistory.length) {
-                                        patternMatches.push(playerHistory[j + patternLength]);
-                                    }
-                                }
-                            }
-                            
-                            if (patternMatches.length > 1) {
-                                const frequency = {};
-                                patternMatches.forEach(move => {
-                                    frequency[move] = (frequency[move] || 0) + 1;
-                                });
-                                
-                                let mostLikely = patternMatches[0];
-                                let maxCount = 0;
-                                for (const move in frequency) {
-                                    if (frequency[move] > maxCount) {
-                                        maxCount = frequency[move];
-                                        mostLikely = move;
-                                    }
-                                }
-                                
-                                return getCounterChoice(mostLikely);
-                            }
-                        }
-                    }
-                    
-                    if (Math.random() < 0.98) {
-                        if (computerWins > playerWins * 1.5) {
-                            return getCounterChoice(lastPlayerMove || playerChoice);
-                        } else {
-                            const prediction = getAdvancedPrediction();
-                            if (prediction) {
-                                return getCounterChoice(prediction);
-                            }
-                        }
-                    }
-                    
-                    if (Math.random() < 0.95) {
-                        const emotionalState = analyzeEmotionalState();
-                        if (emotionalState.predictedMove) {
-                            return getCounterChoice(emotionalState.predictedMove);
-                        }
-                    }
-                    
-                    if (Math.random() < 0.95) {
-                        const frequency = {};
-                        const recentMoves = playerHistory.slice(-7);
-                        recentMoves.forEach((choice, index) => {
-                            const weight = (index + 1) / recentMoves.length;
-                            frequency[choice] = (frequency[choice] || 0) + weight;
-                        });
-                        
-                        let mostFrequent = choices[0];
-                        let maxWeight = 0;
-                        for (const choice in frequency) {
-                            if (frequency[choice] > maxWeight) {
-                                maxWeight = frequency[choice];
-                                mostFrequent = choice;
-                            }
-                        }
-                        
-                        return getCounterChoice(mostFrequent);
-                    }
-                    
-                    if (playerHistory.length > 4 && Math.random() < 0.9) {
-                        const sequences = {};
-                        for (let i = 0; i < playerHistory.length - 2; i++) {
-                            const seq = playerHistory.slice(i, i + 3).join(',');
-                            if (!sequences[seq]) {
-                                sequences[seq] = [];
-                            }
-                            if (i + 3 < playerHistory.length) {
-                                sequences[seq].push(playerHistory[i + 3]);
-                            }
-                        }
-                        
-                        const recentSeq = playerHistory.slice(-3).join(',');
-                        if (sequences[recentSeq] && sequences[recentSeq].length > 0) {
-                            const freq = {};
-                            sequences[recentSeq].forEach(move => {
-                                freq[move] = (freq[move] || 0) + 1;
-                            });
-                            
-                            let mostLikely = sequences[recentSeq][0];
-                            let maxCount = 0;
-                            for (const move in freq) {
-                                if (freq[move] > maxCount) {
-                                    maxCount = freq[move];
-                                    mostLikely = move;
-                                }
-                            }
-                            
-                            return getCounterChoice(mostLikely);
-                        }
-                    }
-                    
-                    if (playerHistory.length > 3 && Math.random() < 0.85) {
-                        const ourLastMoves = [];
-                        for (let i = 1; i < Math.min(4, playerHistory.length); i++) {
-                            ourLastMoves.push(getCounterChoice(playerHistory[playerHistory.length - i]));
-                        }
-                        
-                        const playerMoveCounters = playerHistory.map(move => getCounterChoice(move));
-                        const isCountering = playerMoveCounters.some(counter => 
-                            ourLastMoves.includes(counter)
-                        );
-                        
-                        if (isCountering) {
-                            return choices[Math.floor(Math.random() * choices.length)];
-                        }
-                    }
-                    
-                    if (Math.random() < 0.8) {
-                        if (computerScore > playerScore) {
-                            const desperateMove = getCounterChoice(playerChoice);
-                            return getCounterChoice(desperateMove);
-                        } else {
-                            return getCounterChoice(lastPlayerMove || playerChoice);
-                        }
-                    }
-                }
-                return choices[Math.floor(Math.random() * choices.length)];
-                
             case 'spock':
-                // For Spock mode, we'll use a similar AI to hard mode but adapted for 5 choices
-                if (playerHistory.length > 0) {
-                    if (Math.random() < 0.99) {
-                        for (let patternLength = Math.min(playerHistory.length, 6); patternLength > 2; patternLength--) {
-                            const recentPattern = playerHistory.slice(-patternLength).join('-');
-                            const patternMatches = [];
-                            
-                            for (let j = 0; j < playerHistory.length - patternLength; j++) {
-                                if (playerHistory.slice(j, j + patternLength).join('-') === recentPattern) {
-                                    if (j + patternLength < playerHistory.length) {
-                                        patternMatches.push(playerHistory[j + patternLength]);
-                                    }
-                                }
-                            }
-                            
-                            if (patternMatches.length > 1) {
-                                const frequency = {};
-                                patternMatches.forEach(move => {
-                                    frequency[move] = (frequency[move] || 0) + 1;
-                                });
-                                
-                                let mostLikely = patternMatches[0];
-                                let maxCount = 0;
-                                for (const move in frequency) {
-                                    if (frequency[move] > maxCount) {
-                                        maxCount = frequency[move];
-                                        mostLikely = move;
-                                    }
-                                }
-                                
-                                return getCounterChoice(mostLikely);
-                            }
-                        }
-                    }
-                    
-                    if (Math.random() < 0.98) {
-                        if (computerWins > playerWins * 1.5) {
-                            return getCounterChoice(lastPlayerMove || playerChoice);
-                        } else {
-                            const prediction = getAdvancedPrediction();
-                            if (prediction) {
-                                return getCounterChoice(prediction);
-                            }
-                        }
-                    }
-                    
-                    if (Math.random() < 0.95) {
-                        const emotionalState = analyzeEmotionalState();
-                        if (emotionalState.predictedMove) {
-                            return getCounterChoice(emotionalState.predictedMove);
-                        }
-                    }
-                    
-                    if (Math.random() < 0.95) {
-                        const frequency = {};
-                        const recentMoves = playerHistory.slice(-7);
-                        recentMoves.forEach((choice, index) => {
-                            const weight = (index + 1) / recentMoves.length;
-                            frequency[choice] = (frequency[choice] || 0) + weight;
-                        });
-                        
-                        let mostFrequent = choices[0];
-                        let maxWeight = 0;
-                        for (const choice in frequency) {
-                            if (frequency[choice] > maxWeight) {
-                                maxWeight = frequency[choice];
-                                mostFrequent = choice;
-                            }
-                        }
-                        
-                        return getCounterChoice(mostFrequent);
-                    }
-                    
-                    if (playerHistory.length > 4 && Math.random() < 0.9) {
-                        const sequences = {};
-                        for (let i = 0; i < playerHistory.length - 2; i++) {
-                            const seq = playerHistory.slice(i, i + 3).join(',');
-                            if (!sequences[seq]) {
-                                sequences[seq] = [];
-                            }
-                            if (i + 3 < playerHistory.length) {
-                                sequences[seq].push(playerHistory[i + 3]);
-                            }
-                        }
-                        
-                        const recentSeq = playerHistory.slice(-3).join(',');
-                        if (sequences[recentSeq] && sequences[recentSeq].length > 0) {
-                            const freq = {};
-                            sequences[recentSeq].forEach(move => {
-                                freq[move] = (freq[move] || 0) + 1;
-                            });
-                            
-                            let mostLikely = sequences[recentSeq][0];
-                            let maxCount = 0;
-                            for (const move in freq) {
-                                if (freq[move] > maxCount) {
-                                    maxCount = freq[move];
-                                    mostLikely = move;
-                                }
-                            }
-                            
-                            return getCounterChoice(mostLikely);
-                        }
-                    }
-                    
-                    if (playerHistory.length > 3 && Math.random() < 0.85) {
-                        const ourLastMoves = [];
-                        for (let i = 1; i < Math.min(4, playerHistory.length); i++) {
-                            ourLastMoves.push(getCounterChoice(playerHistory[playerHistory.length - i]));
-                        }
-                        
-                        const playerMoveCounters = playerHistory.map(move => getCounterChoice(move));
-                        const isCountering = playerMoveCounters.some(counter => 
-                            ourLastMoves.includes(counter)
-                        );
-                        
-                        if (isCountering) {
-                            return choices[Math.floor(Math.random() * choices.length)];
-                        }
-                    }
-                    
-                    if (Math.random() < 0.8) {
-                        if (computerScore > playerScore) {
-                            const desperateMove = getCounterChoice(playerChoice);
-                            return getCounterChoice(desperateMove);
-                        } else {
-                            return getCounterChoice(lastPlayerMove || playerChoice);
-                        }
-                    }
-                }
-                return choices[Math.floor(Math.random() * choices.length)];
+                // Use the shared advanced AI logic for both hard and spock modes
+                return getAdvancedComputerChoice(playerChoice);
                 
             default:
                 return choices[Math.floor(Math.random() * choices.length)];
