@@ -107,15 +107,15 @@ app.post('/api/login', (req, res) => {
     db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Server error.');
+            return res.status(500).json('Server error.');
         }
         if (!user) {
-            return res.status(400).send('Invalid username or password.');
+            return res.status(400).json('Invalid username or password.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send('Invalid username or password.');
+            return res.status(400).json('Invalid username or password.');
         }
 
         // Create and return token

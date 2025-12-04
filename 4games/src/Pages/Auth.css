@@ -10,88 +10,41 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  animation: bgShift 10s infinite alternate;
 }
 
-/* When an auth page is active we add `auth-page` to body to prevent page scrolling */
-body.auth-page {
-  overflow: hidden;
-}
-
-/* Ensure the auth box is always centered in the viewport when auth pages are active */
-body.auth-page .auth-container {
-  position: fixed;
-  inset: 0; /* top:0; right:0; bottom:0; left:0 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-/* Force pixel-perfect centering of the auth box to avoid visual offset */
-body.auth-page .auth-form-wrapper {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-@keyframes fadeOutIntro {
-  0% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.auth-container {
-  width: 100%;
-  padding: 2rem;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+@keyframes bgShift {
+  0% { background: linear-gradient(135deg, #1a237e, #3949ab); }
+  25% { background: linear-gradient(135deg, #1a237e, #3f51b5); }
+  50% { background: linear-gradient(135deg, #283593, #3949ab); }
+  75% { background: linear-gradient(135deg, #1a237e, #5c6bc0); }
+  100% { background: linear-gradient(135deg, #0d47a1, #5c6bc0); }
 }
 
 .auth-form-wrapper {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.08);
   border-radius: 15px;
   padding: 2.5rem;
   width: 420px;
   box-sizing: border-box;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.auth-form-wrapper:hover {
+  transform: scale(1.03);
 }
 
 .auth-title {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 700;
   margin-bottom: 2rem;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.input-group {
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: #c5aeff;
+  text-shadow: 0 0 10px rgba(197, 174, 255, 0.7);
 }
 
 .password-wrapper {
@@ -126,23 +79,26 @@ body.auth-page .auth-form-wrapper {
 .auth-input {
   width: 100%;
   padding: 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 8px;
   color: #ffffff;
   font-size: 1rem;
   box-sizing: border-box;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
 }
 
 .auth-input:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.18);
   border-color: #7e57c2;
+  box-shadow: 0 0 15px rgba(126, 87, 194, 0.8), 0 0 25px rgba(126, 87, 194, 0.4);
+  transform: translateY(-2px);
 }
 
 .auth-btn {
-  background-color: #7e57c2;
+  background: linear-gradient(90deg, #7e57c2, #9575cd);
   color: #ffffff;
   border: none;
   padding: 14px;
@@ -152,21 +108,22 @@ body.auth-page .auth-form-wrapper {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
+  box-shadow: 0 0 12px rgba(126, 87, 194, 0.6);
+  width: 100%;
 }
 
 .auth-btn:hover {
-  background-color: #673ab7;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, #673ab7, #9c27b0);
+  box-shadow: 0 0 18px rgba(156, 39, 176, 0.7);
+  transform: translateY(-2px);
 }
 
-.auth-error {
-  color: #ff7b7b;
-  margin-top: 1rem;
-  font-weight: 600;
+.auth-btn:active {
+  transform: translateY(0);
 }
 
 .auth-link {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-size: 0.9rem;
 }
 
@@ -174,10 +131,10 @@ body.auth-page .auth-form-wrapper {
   color: #c5aeff;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .auth-link a:hover {
   color: #ffffff;
-  text-decoration: underline;
+  text-shadow: 0 0 8px #c5aeff;
 }
