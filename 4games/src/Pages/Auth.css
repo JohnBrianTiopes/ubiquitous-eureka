@@ -31,7 +31,7 @@ body {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  text-align: center;
+  text-align: left;
   transition: transform 0.3s ease;
 }
 
@@ -45,6 +45,13 @@ body {
   margin-bottom: 2rem;
   color: #c5aeff;
   text-shadow: 0 0 10px rgba(197, 174, 255, 0.7);
+  text-align: center;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
 }
 
 .password-wrapper {
@@ -61,7 +68,7 @@ body {
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-70%);
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.8);
@@ -125,6 +132,7 @@ body {
 .auth-link {
   margin-top: 1.5rem;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .auth-link a {

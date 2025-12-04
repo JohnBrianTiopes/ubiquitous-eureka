@@ -48,6 +48,8 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
     const [streak, setStreak] = useState(0);
     const [bestStreak, setBestStreak] = useState(0);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [showOutro, setShowOutro] = useState(false);
+    const [outroMessage, setOutroMessage] = useState('');
 
     const bigWinner = winner3x3(bigWinners);
     const isBigDraw = !bigWinner && bigWinners.every((w, i) => w || isFull3x3(boards[i].cells));
@@ -107,6 +109,19 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
             newBigWinners.every((w, i) => w || isFull3x3(newBoards[i].cells));
 
         if (superWinner) {
+            // trigger stylish outro for wins
+            setOutroMessage(
+                superWinner === 'X'
+                    ? vsAI
+                        ? 'You Win!'
+                        : 'X Wins!'
+                    : vsAI
+                        ? 'Bot Wins!'
+                        : 'O Wins!',
+            );
+            setShowOutro(true);
+            setTimeout(() => setShowOutro(false), 2600);
+
             setScoreboard((prev) => ({
                 ...prev,
                 [superWinner]: prev[superWinner] + 1,
@@ -161,6 +176,11 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 setDifficulty(1);
             }
         } else if (superDraw) {
+            // stylish outro for draws
+            setOutroMessage('Draw Game!');
+            setShowOutro(true);
+            setTimeout(() => setShowOutro(false), 2600);
+
             setScoreboard((prev) => ({
                 ...prev,
                 draws: prev.draws + 1,
@@ -300,6 +320,7 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
         setBigWinners(Array(9).fill(null));
         setXIsNext(true);
         setForcedBoard(null);
+        setShowOutro(false);
     };
 
     const resetAll = () => {
@@ -309,6 +330,7 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
         setStreak(0);
         setBestStreak(0);
         setShowLeaderboard(false);
+        setShowOutro(false);
     };
 
     // Expose control functions to parent (Home) so buttons can live in sidebar
@@ -475,15 +497,81 @@ const Tictactoe = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 </div>
             )}
 
+            {showOutro && (
+                (() => {
+                    const isWin =
+                        outroMessage.includes('You Win') ||
+                        outroMessage.includes('X Wins');
+                    const isLoss =
+                        outroMessage.includes('Bot Wins') ||
+                        outroMessage.includes('O Wins');
+
+                    const glowColor = isWin
+                        ? '0 0 18px rgba(56,189,248,0.95), 0 0 44px rgba(56,189,248,1)'
+                        : isLoss
+                        ? '0 0 18px rgba(248,113,113,0.95), 0 0 44px rgba(248,113,113,1)'
+                        : '0 0 16px rgba(56,189,248,0.95), 0 0 40px rgba(249,115,22,0.9)';
+
+                    return (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                inset: 0,
+                                background:
+                                    'radial-gradient(circle at center, rgba(15,23,42,0.25), rgba(15,23,42,0.96))',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 25,
+                                pointerEvents: 'none',
+                                animation:
+                                    'fadeOutOutro 2.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    textAlign: 'center',
+                                    fontFamily: '"Press Start 2P", system-ui',
+                                    fontSize: '1.18rem',
+                                    letterSpacing: '0.23em',
+                                    textTransform: 'uppercase',
+                                    color: '#f9fafb',
+                                    textShadow: glowColor,
+                                    animation: 'outroGlitch 1.4s ease-out',
+                                }}
+                            >
+                                {outroMessage}
+                                {!isWin && (
+                                    <div
+                                        style={{
+                                            marginTop: '1.1rem',
+                                            fontSize: '0.8rem',
+                                            fontFamily: '"Rajdhani", system-ui',
+                                            letterSpacing: '0.11em',
+                                            textTransform: 'uppercase',
+                                            color: '#e5e7eb',
+                                            opacity: 0.92,
+                                        }}
+                                    >
+                                        Press reset to play again
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })()
+            )}
+
             <div
                 style={{
                     flex: '0 1 auto',
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'center',
                     width: '100%',
                     overflow: 'visible',
+                    marginTop: '-0.75rem',
                 }}
             >
                 <div

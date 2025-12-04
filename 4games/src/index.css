@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;600;700&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Rajdhani', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -54,11 +56,60 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+@keyframes fadeOutOutro {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes outroGlitch {
+  0% {
+    text-shadow:
+      0 0 18px rgba(56, 189, 248, 0.95),
+      0 0 44px rgba(56, 189, 248, 1);
+    transform: translate(0, 0);
+  }
+  20% {
+    text-shadow:
+      2px 0 rgba(248, 113, 113, 0.9),
+      -2px 0 rgba(56, 189, 248, 0.9);
+    transform: translate(-1px, 0);
+  }
+  40% {
+    text-shadow:
+      -2px 0 rgba(56, 189, 248, 0.9),
+      2px 0 rgba(248, 113, 113, 0.9);
+    transform: translate(1px, 0);
+  }
+  60% {
+    text-shadow:
+      0 0 18px rgba(56, 189, 248, 0.95),
+      0 0 44px rgba(56, 189, 248, 1);
+    transform: translate(0, 0);
+  }
+  100% {
+    text-shadow:
+      0 0 6px rgba(15, 23, 42, 0.9),
+      0 0 10px rgba(15, 23, 42, 1);
+    transform: translate(0, 0);
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
