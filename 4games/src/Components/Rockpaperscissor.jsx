@@ -1051,7 +1051,7 @@ const Rockpaperscissor = () => {
                         )}
                         
                         <div className="button-group">
-                            <button onClick={backToMenu} className="game-button">
+                            <button onClick={backToRoundSelection} className="game-button">
                                 Back to Menu
                             </button>
                             {leaderboard.length > 0 && (
