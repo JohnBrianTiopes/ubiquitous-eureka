@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import './Memorygame.css';
-import Card from './Card';
 
 const cardImages = [
     {"src": "/images/01.png", matched: false},
@@ -77,7 +76,7 @@ function MemoryGame(){
             <button 
                 onClick={shuffleCards}
                 >Restart</button>
-            <button>Click for a cute song to help you concentrate!</button>
+            <button style={{marginLeft: '40rem'}}>Click for a cute song to help you concentrate!</button>
             <div className="card-grid">
                 {cards.map(card => (
                    <Card 
@@ -92,6 +91,29 @@ function MemoryGame(){
             </div>
         </div>
     )
+}
+
+function Card({card, handleChoice, flipped, disabled}) {
+
+    const handleClick = () => {
+        if (!disabled) {
+          handleChoice(card)  
+        }   
+    }
+    
+  return (
+    <div className="card">
+        <div className={flipped ? "flipped" : ""}>
+            <img className="front" src={card.src} alt="card front"/>
+            <img 
+                className="back"
+                src="/images/cover.png" 
+                alt="card back"
+                onClick={handleClick}
+            />
+        </div>
+    </div>
+  )
 }
 
 export default MemoryGame;
