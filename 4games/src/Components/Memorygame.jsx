@@ -1,15 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const INITIAL_CARDCOUNT = 4;
+const CARDS = [
+
+]
+const STEP = 2;
 
 const Memorygame = () => {
     const navigate = useNavigate();
+    const [leaderboard, setLeaderboard] = useState(() =>{
+        const save = localStorage.getItem('mgleaderboard');
+        return save ? JSON.parse(save) : [];
+    });
+    const [cardcount, setCardcount] = useState(INITIAL_CARDCOUNT)
 
     return (
-        <div style={{ padding: '2rem', color: '#fff', textAlign: 'center' }}>
-            <h1>Memory Game</h1>
-            <p>Game coming soon!</p>
-            <button onClick={() => navigate('/home')} style={{ padding: '10px 15px', cursor: 'pointer', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}>
-                Back to Home
+        <div className="container">
+            <div className="leftside">
+
+            </div>
+
+            <div className="center">
+
+            </div>
+
+            <div className="rightside">
+
+            </div>
+
+        </div>
+    );
+};
+
+const Counter = ({ cardsCount, onClick }) => {
+    const onDecrement = e => {
+        e.preventDefault();
+        const number = cardsCount - STEP;
+        if (number >= 2) onClick(number);
+    };
+
+    const onIncrement = e => {
+        e.preventDefault();
+        const number = cardsCount + STEP;
+        if (number <= 160) onClick(number);
+    };
+
+    return (
+        <div className="quantity">
+            <button className="minus" onClick={onDecrement}>
+                -
+            </button>
+            <span className="quantity">{cardsCount}</span>
+            <button className="plus" onClick={onIncrement}>
+                +
             </button>
         </div>
     );
