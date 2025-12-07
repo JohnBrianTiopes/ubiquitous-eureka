@@ -24,9 +24,8 @@ const Memorygame = () => {
                     <p>3. Aim to get the least amount of turns.</p>
                     <p>4. Pray and hope you aren't showing early signs of dementia.</p>
 
-                    <button onClick={() => navigate('/home')} style={{marginTop: '23rem'}}> Back to Home </button>
+                    <button onClick={() => navigate('/home')} style={{marginTop: '25rem'}}> Back to Home </button>
                 </div>
-
             </div>
 
             <div className='center'>
@@ -35,13 +34,6 @@ const Memorygame = () => {
                 <button > Start Game </button>
             </div>
 
-            <div className='rightside'>
-
-            </div>
-
-            <div className='bottom'>
-
-            </div>
         </div>
     );
 };
