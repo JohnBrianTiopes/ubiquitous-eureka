@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
@@ -13,7 +12,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }
@@ -44,7 +42,6 @@ html, body {
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* Main Container */
 .container {
   position: fixed;
   top: 0;
@@ -59,7 +56,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Header */
 .header {
   background: rgba(0, 0, 0, 0.3);
   padding: 0.8rem 1.5rem;
@@ -77,7 +73,6 @@ html, body {
   color: #fff;
 }
 
-/* Main Content */
 .main-content {
   display: flex;
   flex: 1;
@@ -86,7 +81,6 @@ html, body {
   height: calc(100vh - 120px); /* Subtract header and footer height */
 }
 
-/* Side Panels */
 .side-panel {
   width: 20%;
   background: rgba(0, 0, 0, 0.2);
@@ -109,7 +103,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Center Content */
 .center-content {
   flex: 1;
   padding: 1rem;
@@ -119,7 +112,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Game Mode and Category Cards */
 .game-mode-card, .category-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(5px);
@@ -160,7 +152,6 @@ html, body {
   line-height: 1.2;
 }
 
-/* Leaderboard */
 .leaderboard {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -193,7 +184,6 @@ html, body {
   background: rgba(126, 87, 194, 0.3);
 }
 
-/* Question Card */
 .question-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(5px);
@@ -222,7 +212,6 @@ html, body {
   color: #fff;
 }
 
-/* Option Buttons */
 .option-button {
   display: block;
   width: 100%;
@@ -263,7 +252,6 @@ html, body {
   animation: shake 0.4s;
 }
 
-/* Timer */
 .timer {
   font-size: 1rem;
   color: #0ff;
@@ -279,13 +267,11 @@ html, body {
   animation: pulse 1s infinite;
 }
 
-/* Score */
 .score {
   font-size: 0.9rem;
   color: #c5aeff;
 }
 
-/* Progress Bar */
 .progress {
   width: 100%;
   height: 8px;
@@ -306,7 +292,6 @@ html, body {
   background: linear-gradient(90deg, #ff4d4d, #ff6b6b);
 }
 
-/* Footer */
 .footer {
   background: rgba(0,  0, 0, 0.3);
   padding: 0.8rem 1.5rem;
@@ -318,7 +303,6 @@ html, body {
   height: 60px;
 }
 
-/* Buttons */
 .button {
   padding: 8px 16px;
   font-size: 0.7rem;
@@ -365,7 +349,6 @@ html, body {
   background: linear-gradient(145deg, #9c27b0, #7b1fa2);
 }
 
-/* Decorative Elements */
 .decorative-element {
   position: absolute;
   width: 150px;
@@ -388,7 +371,6 @@ html, body {
   animation: float 8s ease-in-out infinite reverse;
 }
 
-/* Identification Question Box */
 .identification-box {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
@@ -404,7 +386,6 @@ html, body {
   line-height: 1.6;
 }
 
-/* Hint Box */
 .hint-box {
   background: rgba(255, 193, 7, 0.2);
   border-radius: 10px;
@@ -420,7 +401,6 @@ html, body {
   line-height: 1.4;
 }
 
-/* Input Field */
 .input-field {
   width: 100%;
   padding: 0.8rem;
@@ -437,7 +417,6 @@ html, body {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Answer Feedback */
 .answer-feedback {
   margin-top: 1rem;
   padding: 0.8rem;
@@ -458,7 +437,6 @@ html, body {
   color: #fff;
 }
 
-/* Stats Panel */
 .stats-panel {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -478,7 +456,6 @@ html, body {
   line-height: 1.4;
 }
 
-/* Timer Panel */
 .timer-panel {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -499,7 +476,6 @@ html, body {
   animation: pulse 1s infinite;
 }
 
-/* Tips Panel */
 .tips-panel {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -513,7 +489,6 @@ html, body {
   line-height: 1.4;
 }
 
-/* Achievement */
 .achievement {
   font-size: 2.5rem;
   text-align: center;
@@ -535,7 +510,6 @@ html, body {
   text-shadow: 0 0 10px #f00;
 }
 
-/* Game Info */
 .game-info {
   font-size: 0.9rem;
   margin-bottom: 0.8rem;
@@ -548,14 +522,12 @@ html, body {
   line-height: 1.4;
 }
 
-/* Score Display */
 .score-display {
   font-size: 1.2rem;
   color: #0ff;
   text-align: center;
 }
 
-/* Result Message */
 .result-message {
   font-size: 2.5rem;
   color: #c5aeff;
@@ -569,15 +541,52 @@ html, body {
   text-align: center;
 }
 
-/* Button Group */
 .button-group {
   display: flex;
   justify-content: center;
   gap: 0.8rem;
 }
 
-/* Version */
 .version {
   font-size: 0.6rem;
   color: #b0bec5;
+}
+
+/* --- NEW: Styles for True or False Mode --- */
+
+.boolean-options-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.boolean-option-button {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 150px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.boolean-option-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #0ff;
+}
+
+.boolean-option-button.selected-true {
+  background-color: rgba(0, 123, 255, 0.3);
+  border-color: #007bff;
+}
+
+.boolean-option-button.selected-false {
+  background-color: rgba(255, 77, 77, 0.3);
+  border-color: #ff4d4d;
 }
