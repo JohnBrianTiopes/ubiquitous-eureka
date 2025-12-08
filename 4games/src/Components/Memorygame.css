@@ -1,10 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Press+Start+2P&display=swap');
 
-
 .contain{
   position: fixed;
-  top: 0;
-  left: 0;
+  top:0;
+  left:0;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -14,21 +13,34 @@
   overflow: hidden;
 }
 
+.player{
+  position:absolute;
+  padding: 1rem;
+  margin-right: 3rem;
+  top:0;
+  right:0;
+}
+
 .top{
     width: 100%;
-    height: 30%;
     font-family: 'Press Start 2p', system-ui;
     font-size: small;
+    background: rgba(191, 81, 250, 0.29);
     border-bottom:  1px solid rgba(82, 22, 121, 0.768);
     padding: 1rem;
 }
 
-.leftside{
+
+.sidebar{
+  position: fixed;
+  top:0;
+  right:0;
+  font-family: "Jura", sans-serif;
   width: 20%;
   height: 100%;
   background: rgba(191, 81, 250, 0.29);
   padding: 1rem;
-  border-right: 1px solid rgba(82, 22, 121, 0.768);
+  border-left: 1px solid rgba(82, 22, 121, 0.768);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -36,12 +48,11 @@
 }
 
 .howto{
-    font-family: "Jura", sans-serif;
     font-size: small;
     padding: 1rem;
-    margin-top: 1rem;
+    margin-top: 5rem;
 }
 
-.center{
-    font-family: 'Jura', sans-serif;
-}
+
+
+
