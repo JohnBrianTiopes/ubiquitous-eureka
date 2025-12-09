@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Memorygame.css';
 
+//constants
+const cardCount = 4;
+const step = 2;
+
+//the images
 const cardArray = [
     {"src": "/images/01.png", matched: false},
     {"src": "/images/02.png", matched: false},
@@ -16,7 +21,10 @@ const cardArray = [
 const Memorygame = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState(null);
+    const [cardsCount, setCardsCount] = useState(cardCount);
+    const [scores, setScores] = useState();
 
+    //fetch user to display on the thing
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser && storedUser.userId) {
@@ -32,6 +40,32 @@ const Memorygame = () => {
         }
     }, []);
 
+    const Counter = ( {cardsCount, onClick } ) => {
+        const onDecrement = e => {
+            e.preventDefault();
+            const number = cardsCount - step;
+            if (number >= 2) onClick(number);
+        };
+
+        const onIncrement = e => {
+            e.preventDefault();
+             const number = cardsCount + step;
+            if (number <= 24) onClick(number);
+        };
+
+        return (
+            <div className="quantity">
+                <button className="minus" onClick={onDecrement}>
+                    -
+                </button>
+                <span className="quantity">{cardsCount}</span>
+                <button className="plus" onClick={onIncrement}>
+                    +
+                </button>
+            </div>
+        );
+    };
+
     return (
         <div className='contain'>
             <div className='top'>
@@ -45,6 +79,10 @@ const Memorygame = () => {
 
             
             <div className='main'>
+                <div className='counter'>
+                    <h4> Amount of Cards: </h4>
+                    <Counter cardsCount={cardsCount} onClick={setCardsCount} /> 
+                </div>
 
             </div>
 
