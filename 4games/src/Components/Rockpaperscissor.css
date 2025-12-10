@@ -1,3 +1,4 @@
+
 .game-container {
     width: 100vw;
     height: 100vh;
@@ -30,12 +31,11 @@
     display: flex;
     flex-direction: column;
     align-items: center; 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
 }
 
-/* Hide scrollbar */
+
 .game-frame::-webkit-scrollbar {
     display: none;
 }
@@ -49,7 +49,7 @@
     pointer-events: none;
 }
 
-/* Typography */
+
 .game-title {
     font-size: 32px;
     margin-bottom: 20px;
@@ -73,7 +73,6 @@
     text-shadow: 1px 1px 0 #000;
 }
 
-/* Button Styles */
 .game-button {
     padding: 15px 20px;
     cursor: pointer;
@@ -94,22 +93,11 @@
     box-shadow: 2px 2px 0 #000;
 }
 
-.game-button.easy {
-    background: #4caf50;
-}
-
-.game-button.medium {
-    background: #ff9800;
-
-}
-
-.game-button.medium:hover {
-    transform: translateY(-2px); 
-}
-
-.game-button.hard {
-    background: #f44336;
-}
+.game-button.easy { background: #4caf50; }
+.game-button.medium { background: #ff9800; }
+.game-button.hard { background: #f44336; }
+.game-button.spock { background: #6200EE; }
+.game-button.danger { background: #f44336; }
 
 .secondary-button {
     padding: 10px 15px;
@@ -148,7 +136,6 @@
     box-shadow: 2px 2px 0 #000;
 }
 
-/* Layout Components */
 .button-group {
     display: flex;
     justify-content: center;
@@ -166,6 +153,7 @@
     display: flex;
     justify-content: space-between;
     margin: 20px 0;
+    width: 100%;
 }
 
 .score-box {
@@ -173,23 +161,17 @@
     border: 4px solid #000;
     border-radius: 0px;
     box-shadow: 4px 4px 0 #000;
+    flex: 1;
+    margin: 0 5px;
 }
 
 .score-box h3 {
     text-shadow: 1px 1px 0 #000;
 }
 
-.player-score {
-    background-color: rgba(76, 175, 80, 0.7);
-}
-
-.round-info {
-    background-color: rgba(255, 152, 0, 0.7);
-}
-
-.computer-score {
-    background-color: rgba(244, 67, 54, 0.7);
-}
+.player-score { background-color: rgba(76, 175, 80, 0.7); }
+.round-info { background-color: rgba(255, 152, 0, 0.7); }
+.computer-score { background-color: rgba(244, 67, 54, 0.7); }
 
 .choices-container {
     display: flex;
@@ -197,6 +179,13 @@
     gap: 30px;
     margin-top: 30px;
 }
+
+.choices-container.five-choices {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
 
 .choice-container {
     display: flex;
@@ -232,11 +221,23 @@
     text-shadow: 1px 1px 0 #000;
 }
 
-/* Result Screen */
+.rules-reference {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.rules-image {
+    max-width: 80%;
+    max-height: 200px;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
 .result-container {
     display: flex;
     justify-content: center;
     gap: 50px;
+    margin-top: 20px;
 }
 
 .player-choice, .computer-choice {
@@ -261,13 +262,8 @@
     justify-content: center;
 }
 
-.player-choice .choice-display {
-    background-color: rgba(76, 175, 80, 0.7);
-}
-
-.computer-choice .choice-display {
-    background-color: rgba(244, 67, 54, 0.7);
-}
+.player-choice .choice-display { background-color: rgba(76, 175, 80, 0.7); }
+.computer-choice .choice-display { background-color: rgba(244, 67, 54, 0.7); }
 
 .choice-name {
     margin-top: 10px;
@@ -284,19 +280,10 @@
     font-weight: bold;
 }
 
-.result-text.win {
-    color: #4caf50;
-}
+.result-text.win { color: #4caf50; }
+.result-text.lose { color: #f44336; }
+.result-text.tie { color: #ff9800; }
 
-.result-text.lose {
-    color: #f44336;
-}
-
-.result-text.tie {
-    color: #ff9800;
-}
-
-/* Game Over Screen */
 .final-result {
     margin: 30px 0;
     font-size: 32px;
@@ -304,17 +291,9 @@
     font-weight: bold;
 }
 
-.final-result.win {
-    color: #4caf50;
-}
-
-.final-result.lose {
-    color: #f44336;
-}
-
-.final-result.tie {
-    color: #ff9800;
-}
+.final-result.win { color: #4caf50; }
+.final-result.lose { color: #f44336; }
+.final-result.tie { color: #ff9800; }
 
 .final-scores {
     display: flex;
@@ -334,90 +313,20 @@
     text-shadow: 1px 1px 0 #000;
 }
 
-.final-score.player {
-    background-color: rgba(76, 175, 80, 0.7);
-}
+.final-score.player { background-color: rgba(76, 175, 80, 0.7); }
+.final-score.computer { background-color: rgba(244, 67, 54, 0.7); }
 
-.final-score.computer {
-    background-color: rgba(244, 67, 54, 0.7);
-}
-
-
-.emoji-icon {
-    font-size: 80px; 
-    line-height: 1;
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none; /* Prevents text selection on double click */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
-}
-
-
-.rules-reference {
-    margin: 10px 0;
-    text-align: center;
-}
-
-.rules-title {
-    margin-bottom: 5px;
-    font-size: 16px;
-}
-
-.rules-image-container {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0;
-}
-
-.rules-image {
-    max-width: 80%;
-    max-height: 200px;
-    border: 2px solid #333;
-    border-radius: 5px;
-}
-
-.five-choices {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-}
-
-/* Button Spock mode */
-.game-button.spock {
-    background-color: #6200EE;
-    color: white;
-}
-
-.game-button.spock:hover {
-    background-color: #3700B3;
-}
-
-/* Spock Introduction Screen Styles (UPDATED) */
-.spock-introduction {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.introduction-content {
+.spock-introduction .introduction-content {
     text-align: center;
     margin: 5px 0;
     max-width: 90%;
     overflow-y: auto;
     max-height: 60vh;
- 
-    -ms-overflow-style: none; 
-    scrollbar-width: none;  
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
-
-.introduction-content::-webkit-scrollbar {
+.spock-introduction .introduction-content::-webkit-scrollbar {
     display: none;
 }
 
@@ -449,56 +358,8 @@
 
 .rule-item:before {
     content: "▶";
-    margin-right: 0px;
+    margin-right: 5px;
     color: #ffcc00;
-}
-
-
-.video-container {
-    margin: 20px 0;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.video-title {
-    margin-bottom: 15px;
-    font-size: 18px;
-    color: #ffcc00;
-    text-shadow: 2px 2px 0 #000;
-}
-
-.video-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 500px; 
-    margin: 0 auto;
-    padding-bottom: 56.25%; 
-    height: 0;
-    overflow: hidden;
-    border: 4px solid #000;
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.rules-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-
-/*Leaderboard*/
-
-
-.leaderboard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .leaderboard-table {
@@ -534,54 +395,24 @@
     padding: 10px;
     text-align: center;
     border-right: 1px solid #333;
+    word-wrap: break-word;
 }
 
 .table-cell:last-child {
     border-right: none;
 }
 
-.rank {
-    flex: 0.5;
-}
+.table-cell.rank { flex: 0.5; }
+.table-cell.player { flex: 1.5; text-align: left; padding-left: 15px; }
+.table-cell.date { flex: 1; }
+.table-cell.difficulty { flex: 1; }
+.table-cell.rounds { flex: 0.5; }
+.table-cell.score { flex: 1; }
+.table-cell.result { flex: 0.5; font-weight: bold; }
 
-.player { 
-    flex: 1.5;
-    text-align: left; 
-    padding-left: 15px; 
-}
-
-.date {
-    flex: 1;
-}
-
-.difficulty {
-    flex: 1;
-}
-
-.rounds {
-    flex: 0.5;
-}
-
-.score {
-    flex: 1;
-}
-
-.result {
-    flex: 0.5;
-    font-weight: bold;
-}
-
-.result.win {
-    color: #4caf50;
-}
-
-.result.loss {
-    color: #f44336;
-}
-
-.result.tie {
-    color: #ff9800;
-}
+.table-cell.result.win { color: #4caf50; }
+.table-cell.result.loss { color: #f44336; }
+.table-cell.result.tie { color: #ff9800; }
 
 .no-scores {
     text-align: center;
@@ -590,10 +421,16 @@
     color: #ddd;
 }
 
-.danger {
-    background-color: #f44336 !important;
-}
-
-.danger:hover {
-    background-color: #d32f2f !important;
+.emoji-icon {
+    font-size: 80px; 
+    line-height: 1;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none; 
 }

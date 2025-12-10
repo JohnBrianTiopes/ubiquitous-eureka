@@ -71,7 +71,7 @@ const Rockpaperscissor = () => {
         };
         
         const newLeaderboard = [...leaderboard, gameResult];
-        // Sort by player score (descending) and then by date (most recent first)
+        
         newLeaderboard.sort((a, b) => {
             if (a.playerScore !== b.playerScore) {
                 return b.playerScore - a.playerScore;
@@ -79,16 +79,16 @@ const Rockpaperscissor = () => {
             return new Date(b.date) - new Date(a.date);
         });
         
-        // Keep only top 10 scores
+        
         setLeaderboard(newLeaderboard.slice(0, 10));
     };
     
-    // New function to clear the leaderboard
+    
     const clearLeaderboard = () => {
         setLeaderboard([]);
     };
     
-    // Different choices based on game mode
+    
     const getChoices = () => {
         if (difficulty === 'spock') {
             return ['rock', 'paper', 'scissors', 'lizard', 'spock'];
@@ -103,7 +103,7 @@ const Rockpaperscissor = () => {
     
     const selectDifficulty = (level) => {
         setDifficulty(level);
-        // If Spock is selected, show the introduction first
+        
         if (level === 'spock') {
             setGameState('spockIntroduction');
         } else {
@@ -403,7 +403,7 @@ const Rockpaperscissor = () => {
                 
             case 'hard':
             case 'spock':
-                // Use the shared advanced AI logic for both hard and spock modes
+                
                 return getAdvancedComputerChoice(playerChoice);
                 
             default:
@@ -582,7 +582,7 @@ const Rockpaperscissor = () => {
     };
     
     const getCounterChoice = (choice) => {
-        // For standard RPS
+        
         if (difficulty !== 'spock') {
             switch (choice) {
                 case 'rock':
@@ -596,7 +596,6 @@ const Rockpaperscissor = () => {
                     return choices[Math.floor(Math.random() * choices.length)];
             }
         } 
-        // For RPSLS
         else {
             switch (choice) {
                 case 'rock':
@@ -624,7 +623,7 @@ const Rockpaperscissor = () => {
     const determineWinner = (player, computer) => {
         if (player === computer) return "It's a Tie!";
         
-        // Standard RPS rules
+        
         if (difficulty !== 'spock') {
             if (
                 (player === 'rock' && computer === 'scissors') ||
@@ -636,7 +635,7 @@ const Rockpaperscissor = () => {
             
             return 'Computer Wins!';
         } 
-        // RPSLS rules
+        
         else {
             // Scissors cuts Paper
             if (player === 'scissors' && computer === 'paper') return 'You Win!';
@@ -709,7 +708,6 @@ const Rockpaperscissor = () => {
         setGameState('playing');
     };
     
-    // Simplified Emoji Icon Component
     const EmojiIcon = ({ choice }) => {
         const choiceEmojis = {
             rock: '✊',
@@ -828,20 +826,6 @@ const Rockpaperscissor = () => {
                                 <div className="rule-item">Paper disproves Spock</div>
                                 <div className="rule-item">Spock vaporizes Rock</div>
                                 <div className="rule-item">(and as it always has) Rock crushes Scissors</div>
-                            </div>
-                            
-                            <div className="video-container">
-                                <h3 className="video-title">Watch The Big Bang Theory explain the rules:</h3>
-                                <div className="video-wrapper">
-                                    <iframe 
-                                        src="https://www.youtube.com/embed/_PUEoDYpUyQ?controls=0" 
-                                        title="Rock Paper Scissors Lizard Spock" 
-                                        frameBorder="0" 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                        allowFullScreen
-                                        className="rules-video"
-                                    ></iframe>
-                                </div>
                             </div>
                         </div>
                         
