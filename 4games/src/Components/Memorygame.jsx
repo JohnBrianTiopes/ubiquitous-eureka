@@ -14,6 +14,8 @@ const cardImages=[
     {"src":"/images/08.png", matched:false},
 ]
 
+const audioelement = new Audio (cutesong);
+
 function Memorygame() {
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
@@ -23,6 +25,7 @@ function Memorygame() {
     const [disabled, setDisabled] = useState(false);
     const [matchedPairs, setMatchedPairs] = useState(0);
     const [isWon, setIsWon] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(0);
     const [startGame, setStartGame] = useState(false);
     const [boardleader, setBoardleader] = useState(() => {
         const savedscore = localStorage.getItem('mgleaderboard');
@@ -38,7 +41,6 @@ function Memorygame() {
         setCards(shuffledCards)
         setTurns(0)
         setMatchedPairs(0)
-        setIsWon(false)
     }
 
     const handleChoice = (card) => {
@@ -80,6 +82,12 @@ function Memorygame() {
     useEffect(() => {
         if(matchedPairs === 8){
             setTimeout(() => setIsWon(true), 1000)
+            const newEntry = {turns, date: new Date().toLocaleString() };
+            const update = [...boardleader, newEntry]
+                .sort((a, b) => a.score - b.score)
+                .slice(0, 10)
+            setBoardleader(update);
+            localStorage.setItem("mgleaderboard", JSON.stringify(update));
         }
     }, [matchedPairs]);
 
@@ -90,8 +98,16 @@ function Memorygame() {
     }, [startGame]);
 
     const playpause = () => {
-
+        setIsPlaying(prevIsPlaying => prevIsPlaying+ 1);
     }
+
+    useEffect(() => {
+        if(isPlaying % 2 === 0){
+            audioelement.pause();
+        } else {
+            audioelement.play();
+        }
+    }, [isPlaying]);
 
     if(!startGame){
         return (
@@ -111,9 +127,18 @@ function Memorygame() {
                     </div>
 
                     <div className='boardleader'>
-
+                        <h4 className='boardleader-title'>Who has the most terrible memory:</h4>
+                        {boardleader.length === 0 ? (
+                            <p style={{fontSize:'12px', marginTop:'6rem'}}>No scores yet...Did you forget to play?</p>
+                        ) : (
+                            boardleader.map((entry, i) => (
+                                <div style={{marginTop: '5px'}} key={i}>
+                                    <span> {i + 1}. Completed at {entry.turns} turns.</span>
+                                </div>
+                            ))
+                        )}
                     </div>
-                    <button onClick={() => navigate('/home')}> Go Back to Home </button>
+                    <button className='homebutton' onClick={() => navigate('/home')}> Go Back to Home </button>
                 </div>
 
                 <div className='main'>
@@ -141,9 +166,18 @@ function Memorygame() {
                     </div>
 
                     <div className='boardleader'>
-
+                        <h4 className='boardleader-title'>Who has the most terrible memory:</h4>
+                        {boardleader.length === 0 ? (
+                            <p style={{fontSize:'12px', marginTop:'6rem'}}>No scores yet...Did you forget to play?</p>
+                        ) : (
+                            boardleader.map((entry, i) => (
+                                <div style={{marginTop: '5px'}} key={i}>
+                                    <span> {i + 1}. Completed at {entry.turns} turns. </span>
+                                </div>
+                            ))
+                        )}
                     </div>
-                    <button onClick={() => navigate('/home')}> Go Back to Home </button>
+                    <button className='homebutton' onClick={() => navigate('/home')}> Go Back to Home </button>
                 </div>
 
                 <div className='game'>
@@ -157,16 +191,19 @@ function Memorygame() {
                                 disabled={disabled}
                             />
                         ))}
-                        <p style={{fontFamily: 'Press start 2p'}}>Turns: {turns} </p>
                     </div>
                 </div>
 
                 <div>
-                    <button className='specialbutton'> Click for a cutesy song! </button>
+                    <button className='specialbutton' onClick={playpause}> Click for a cutesy song! </button>
                 </div>
 
                 <div>
                     <button className='restart' onClick={shuffleCards}> Reset Game </button>
+                </div>
+
+                <div className='turns'>
+                    <p>Turns: {turns} </p>
                 </div>
             </div>
         )
