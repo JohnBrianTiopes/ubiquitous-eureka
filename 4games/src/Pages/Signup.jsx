@@ -28,20 +28,13 @@ const Signup = () => {
     try {
       const response = await axios.post('/api/signup', { username, password });
       
-      localStorage.setItem('user', JSON.stringify({
-        userId: response.data.userId,
-        username: response.data.username,
-        token: response.data.token
-      }));
-      // Trigger home intro only on fresh signup
-      localStorage.setItem('showHomeIntro', 'true');
-      
-      setSuccess('Signup successful! Redirecting to home...');
+      // Do not auto-log the user in; just confirm signup
+      setSuccess('Signup successful! Please log in.');
       setUsername('');
       setPassword('');
       
       setTimeout(() => {
-        navigate('/home');
+        navigate('/');
       }, 1500);
     } catch (err) {
       setError(err.response?.data || 'Signup failed. Please try again.');
