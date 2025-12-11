@@ -35,6 +35,8 @@ const Login = () => {
           username: data.username,
           token: data.token
         }));
+        // Trigger home intro only on fresh login
+        localStorage.setItem('showHomeIntro', 'true');
         navigate('/home');
       } else {
         setError(data || 'Invalid username or password');
@@ -48,7 +50,7 @@ const Login = () => {
     <div className="auth-container">
       <div className="auth-form-wrapper">
         <h2 className="auth-title">Log In</h2>
-        <form onSubmit={handleLogin} className="auth-form">
+        <form onSubmit={handleLogin} className="auth-form" autoComplete="off">
           <div className="input-group">
             <label htmlFor="username">Username</label>
             <input
@@ -57,6 +59,7 @@ const Login = () => {
               className="auth-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              autoComplete="off"
               required
             />
           </div>
@@ -69,6 +72,7 @@ const Login = () => {
                 className="auth-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="off"
                 required
               />
               <button

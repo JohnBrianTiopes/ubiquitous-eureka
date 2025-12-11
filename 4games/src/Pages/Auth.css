@@ -146,3 +146,10 @@ body {
   color: #ffffff;
   text-shadow: 0 0 8px #c5aeff;
 }
+
+.auth-error {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #ff9aa2;
+  text-align: left;
+}
