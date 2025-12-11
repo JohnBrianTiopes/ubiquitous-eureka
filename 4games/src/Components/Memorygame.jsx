@@ -1,108 +1,182 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import './Memorygame.css';
+import { useNavigate } from 'react-router-dom';
 
-//constants
-const cardCount = 4;
-const step = 2;
-
-//the images
-const cardArray = [
-    {"src": "/images/01.png", matched: false},
-    {"src": "/images/02.png", matched: false},
-    {"src": "/images/03.png", matched: false},
-    {"src": "/images/04.png", matched: false},
-    {"src": "/images/05.png", matched: false},
-    {"src": "/images/06.png", matched: false},
-    {"src": "/images/07.png", matched: false},
-    {"src": "/images/08.png", matched: false}
+const cardImages=[
+    {"src":"/images/01.png", matched:false},
+    {"src":"/images/02.png", matched:false},
+    {"src":"/images/03.png", matched:false},
+    {"src":"/images/04.png", matched:false},
+    {"src":"/images/05.png", matched:false},
+    {"src":"/images/06.png", matched:false},
+    {"src":"/images/07.png", matched:false},
+    {"src":"/images/08.png", matched:false},
 ]
 
-const Memorygame = () => {
+function Memorygame() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState(null);
-    const [cardsCount, setCardsCount] = useState(cardCount);
-    const [scores, setScores] = useState();
+    const [cards, setCards] = useState([]);
+    const [turns, setTurns] = useState(0);
+    const [choiceOne, setChoiceOne] = useState(null);
+    const [choiceTwo, setChoiceTwo] = useState(null);
+    const [disabled, setDisabled] = useState(false);
+    const [matchedPairs, setMatchedPairs] = useState(0);
+    const [isWon, setIsWon] = useState(false);
+    const [startGame, setStartGame] = useState(false);
+    const [boardleader, setBoardleader] = useState(() => {
+        const savedscore = localStorage.getItem('mgleaderboard');
+        return savedscore ? JSON.parse(savedscore) : [];
+    });
 
-    //fetch user to display on the thing
+    const shuffleCards = () => {
+        const shuffledCards = [...cardImages, ...cardImages]
+            .sort(() => Math.random() - 0.5)
+            .map((card) => ({...card, id: Math.random() }))
+        setChoiceOne(null)
+        setChoiceTwo(null)
+        setCards(shuffledCards)
+        setTurns(0)
+        setMatchedPairs(0)
+        setIsWon(false)
+    }
+
+    const handleChoice = (card) => {
+        choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
+    }
+
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser && storedUser.userId) {
-            fetch(`http://localhost:5000/api/user/${storedUser.userId}`)
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to fetch user');
-                return res.json();
-            })
-            .then((data) => setUsername(data.username))
-            .catch(() => {
-                setUsername(storedUser.username || 'user');
-            });
+        if(choiceOne && choiceTwo) {
+            setDisabled(true)
+            if(choiceOne.src === choiceTwo.src) {
+                setCards(prevCards => {
+                    return prevCards.map(card => {
+                        if(card.src === choiceOne.src){
+                            return{...card, matched:true}
+                        } else {
+                            return card;
+                        }
+                    })
+                })
+                setMatchedPairs(prevMatchedPairs => prevMatchedPairs + 1);
+                resetTurn();
+            } else {
+                setTimeout(() => resetTurn(), 1000)
+            }
         }
-    }, []);
+    }, [choiceOne, choiceTwo]);
 
-    const Counter = ( {cardsCount, onClick } ) => {
-        const onDecrement = e => {
-            e.preventDefault();
-            const number = cardsCount - step;
-            if (number >= 2) onClick(number);
-        };
+    const resetTurn = () => {
+        setChoiceOne(null)
+        setChoiceTwo(null)
+        setTurns(prevTurns => prevTurns + 1)
+        setDisabled(false)
+    }
 
-        const onIncrement = e => {
-            e.preventDefault();
-             const number = cardsCount + step;
-            if (number <= 24) onClick(number);
-        };
+    const gamestart = () => {
+        setStartGame(true)
+    }
 
+    useEffect(() => {
+        if(matchedPairs === 8){
+            setTimeout(() => setIsWon(true), 1000)
+        }
+    }, [matchedPairs]);
+
+    useEffect(() => {
+        if(startGame){
+            setTimeout(() => shuffleCards(), 1000)
+        }
+    }, [startGame]);
+
+    if(!startGame){
         return (
-            <div className="quantity">
-                <button className="minus" onClick={onDecrement}>
-                    -
-                </button>
-                <span className="quantity">{cardsCount}</span>
-                <button className="plus" onClick={onIncrement}>
-                    +
-                </button>
+            <div className='contain'>
+                <div className='top'>
+                    <h2> Super cutesy memory game!</h2>
+                    <p> to test your super cutesy memory!</p>
+                </div>
+
+                <div className='sidebar'>
+                    <div className='howto'>
+                        <h4> HOW TO PLAY THE GAME?</h4>
+                        <li>Click on the card to flip it and reveal the picture</li>
+                        <li>Find all the matching pairs in the grid</li>
+                        <li>Aim to get all pairs in the least amount of turns</li>
+                        <li>Pray and hope you aren't showing early signs of dementia</li>
+                    </div>
+
+                    <div className='boardleader'>
+
+                    </div>
+                    <button onClick={() => navigate('/home')}> Go Back to Home </button>
+                </div>
+
+                <div className='main'>
+                    <button 
+                        style={{fontFamily:'Press start 2p'}}
+                        onClick={gamestart}
+                    > Start Game </button>
+                </div>
             </div>
-        );
-    };
+        )
+    }
+
+    if(startGame){
+        return(
+            <div className='contain'>
+                <div className='top'>
+                    <h2> Super cutesy memory game!</h2>
+                    <p> to test your super cutesy memory!</p>
+                </div>
+
+                <div className='sidebar'>
+                    <div className='howto'>
+                        <h4> HOW TO PLAY THE GAME?</h4>
+                        <li>Click on the card to flip it and reveal the picture</li>
+                        <li>Find all the matching pairs in the grid</li>
+                        <li>Aim to get all pairs in the least amount of turns</li>
+                        <li>Pray and hope you aren't showing early signs of dementia</li>
+                    </div>
+
+                    <div className='boardleader'>
+
+                    </div>
+                    <button onClick={() => navigate('/home')}> Go Back to Home </button>
+                </div>
+
+                <div className='game'>
+                    <div className='card-grid'>
+                        {cards.map(card => (
+                            <Card 
+                                key={card.id}
+                                card={card}
+                                handleChoice={handleChoice}
+                                flipped={card === choiceOne || card === choiceTwo || card.matched}
+                                disabled={disabled}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+function Card ({card, handleChoice, flipped, disabled}) {
+    const handleClick = () => {
+        if(!disabled){
+            handleChoice(card)
+        }
+    }
 
     return (
-        <div className='contain'>
-            <div className='top'>
-                <h2> Super cutesy Memory game! </h2>
-                <p> to test your super cutesy memory!</p>
-                <div className='player'>
-                    <h3> Who's playing? </h3>
-                    <p style={{marginTop: '5px', fontFamily: 'Jura', fontSize:'15px'}}> {username} </p>
-                </div>
+        <div className="card">
+            <div className = {flipped ? "flipped" : ""}>
+                <img className="front" src={card.src} alt="card front" />
+                <img className="back" src="/images/cover.png" alt="card back" onClick={handleClick}/>
             </div>
-
-            
-            <div className='main'>
-                <div className='counter'>
-                    <h4> Amount of Cards: </h4>
-                    <Counter cardsCount={cardsCount} onClick={setCardsCount} /> 
-                </div>
-
-            </div>
-
-            <div className='sidebar'>
-                <div className='howto'>
-                    <h2>How to play the game:</h2>
-                    <p>1. Click on the cards to flip them.</p>
-                    <p>2. Try and find the matching pairs.</p>
-                    <p>3. Aim to get the least amount of turns.</p>
-                    <p>4. Pray and hope you aren't showing early signs of dementia.</p>
-                </div>
-
-                <div className='leaderboard'>
-                    <h4> Who has the most terrible memory:</h4>
-                </div>
-
-                <button onClick={() => navigate('/home')} style={{marginTop: '1.5rem'}}> Back to Home </button>
-            </div>  
         </div>
-    );
-};
+    )
+}
 
 export default Memorygame;

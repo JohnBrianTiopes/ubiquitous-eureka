@@ -14,26 +14,22 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(45deg, #6f0f89, #bf39e0, #db4bba);
+  background: linear-gradient(45deg, #170888, #290d3b, #772f6d);
   color: #fff;
   overflow: hidden;
 }
 
-.player{
-  position:absolute;
-  padding: 1rem;
-  margin-right: 3rem;
-  top:0;
-  right:0;
-}
-
 .top{
-    width: 100%;
     font-family: 'Press Start 2p', system-ui;
     font-size: small;
-    background: rgba(191, 81, 250, 0.29);
+    align-items: center;
+    justify-content: center;
+    background: rgb(240, 80, 216);
     border-bottom:  1px solid rgba(82, 22, 121, 0.768);
-    padding: 1rem;
+    padding: 0.8rem 1.5rem;
+    z-index: 10;
+    display: flex;
+    flex-shrink: 0;
 
 }
 
@@ -44,7 +40,7 @@
   font-family: "Jura", sans-serif;
   width: 20%;
   height: 100%;
-  background: rgba(191, 81, 250, 0.29);
+  background: rgba(240, 80, 216);
   padding: 1rem;
   border-left: 1px solid rgba(82, 22, 121, 0.768);
   display: flex;
@@ -56,7 +52,67 @@
 .howto{
     font-size: small;
     padding: 1rem;
-    margin-top: 5rem;
+    margin-top: 4rem;
+}
+
+.boardleader{
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    height: 50%;
+    overflow-y: auto;
+}
+
+.game{
+  width: 60%;
+  height: 100%;
+  position:absolute;
+  top:5;
+  left:130px;
+  overflow: auto;
+}
+
+
+.card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.card{
+    position: relative;
+}
+
+.card img{
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgb(101, 16, 127), 0 0 20px rgb(240, 80, 216);
+}
+
+.card .front{
+    transform: rotateY(90deg);
+    transition: all ease-in 0.2s;
+    position: absolute;
+}
+
+.flipped .front{
+    transform: rotateY(0deg);
+    transition-delay: 0.2s;
+    box-shadow: 0 0 10px rgb(86, 13, 13), 0 0 20px rgb(224, 38, 38);
+}
+
+.card .back{
+    transition: all ease-in 0.2s;
+    transition-delay: 0.2s;
+}
+
+.flipped .back{
+    transform: rotateY(90deg);
+    transition-delay: 0s;
 }
 
 
