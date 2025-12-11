@@ -13,7 +13,7 @@ const JWT_SECRET = 'your-secret-key-change-in-production'; // Add this line
 app.use(cors());
 app.use(express.json());
 
-const dbPath = path.join(__dirname, 'ngilo.db');
+const dbPath = path.join(__dirname, '4games.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error connecting to the database:', err.message);
@@ -72,6 +72,18 @@ app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send('Username and password are required.');
+    }
+
+    // Basic password policy: at least 8 chars and must include
+    // both letters and at least one number or symbol
+    const hasMinimumLength = password.length >= 8;
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNonLetter = /[^A-Za-z]/.test(password);
+
+    if (!hasMinimumLength || !hasLetter || !hasNonLetter) {
+        return res
+            .status(400)
+            .send('Password must be 8+ characters with letters and a number or symbol.');
     }
 
     try {
