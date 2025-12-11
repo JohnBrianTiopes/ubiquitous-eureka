@@ -45,7 +45,7 @@ const Home = () => {
       'Afel with gra gra when she did that gun shot on jan leigh lmao',
       'Dev is like the biggest gay nigger',
       'Choco the master baiter',
-      'Who tf is Chate???',
+      'Chate, what do you call her? Cha-tae',
       'Arella the garlic bread master',
       'Ubas? Its grapes lil boi and remove the g',
       'The fallen of Malbas, is this nigga even alive?',
