@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Memorygame.css';
 import { useNavigate } from 'react-router-dom';
+import cutesong from '/audio/cute_song.wav';
 
 const cardImages=[
     {"src":"/images/01.png", matched:false},
@@ -88,6 +89,10 @@ function Memorygame() {
         }
     }, [startGame]);
 
+    const playpause = () => {
+
+    }
+
     if(!startGame){
         return (
             <div className='contain'>
@@ -112,10 +117,7 @@ function Memorygame() {
                 </div>
 
                 <div className='main'>
-                    <button 
-                        style={{fontFamily:'Press start 2p'}}
-                        onClick={gamestart}
-                    > Start Game </button>
+                    <button className='startbutton' onClick={gamestart}> Start Game </button>
                 </div>
             </div>
         )
@@ -155,7 +157,16 @@ function Memorygame() {
                                 disabled={disabled}
                             />
                         ))}
+                        <p style={{fontFamily: 'Press start 2p'}}>Turns: {turns} </p>
                     </div>
+                </div>
+
+                <div>
+                    <button className='specialbutton'> Click for a cutesy song! </button>
+                </div>
+
+                <div>
+                    <button className='restart' onClick={shuffleCards}> Reset Game </button>
                 </div>
             </div>
         )
