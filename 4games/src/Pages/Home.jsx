@@ -6,11 +6,14 @@ const Home = () => {
   const [user, setUser] = useState(null);
   const [showTicTacToe, setShowTicTacToe] = useState(false);
   const [ticTacToeIntro, setTicTacToeIntro] = useState(false);
+  const [showHomeIntro, setShowHomeIntro] = useState(false);
   const [ticTacToeControls, setTicTacToeControls] = useState({ resetGame: null, resetAll: null });
   const [ticTacToeMode, setTicTacToeMode] = useState('ai'); // 'ai' or '2p'
   const [setGameModeFn, setSetGameModeFn] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const navigate = useNavigate();
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -20,6 +23,21 @@ const Home = () => {
     }
     setUser(userData);
   }, [navigate]);
+
+  // Only show the home intro right after a fresh login/signup
+  useEffect(() => {
+    const shouldShow = localStorage.getItem('showHomeIntro') === 'true';
+    if (shouldShow) {
+      setShowHomeIntro(true);
+      localStorage.removeItem('showHomeIntro');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!showHomeIntro) return;
+    const timer = setTimeout(() => setShowHomeIntro(false), 2200);
+    return () => clearTimeout(timer);
+  }, [showHomeIntro]);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -94,7 +112,7 @@ const Home = () => {
 
   const containerStyle = {
     minHeight: '100vh',
-    padding: '2rem',
+    padding: isMobile ? '1.25rem 0.85rem' : '2rem',
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Press Start 2P, cursive',
@@ -108,21 +126,21 @@ const Home = () => {
   };
 
   const welcomeStyle = {
-    fontSize: '2.5rem',
+    fontSize: isMobile ? '1.8rem' : '2.5rem',
     marginBottom: '1rem',
     textShadow: '0 0 10px #0ff, 0 0 20px #0ff',
     color: '#fff',
   };
 
   const subtitleStyle = {
-    fontSize: '1rem',
+    fontSize: isMobile ? '0.85rem' : '1rem',
     marginBottom: '2rem',
     color: '#c5cae9',
   };
 
   const gameContainerStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '2rem',
     maxWidth: '1000px',
     margin: '0 auto 3rem',
@@ -203,7 +221,9 @@ const Home = () => {
       <div
         style={{
           display: 'flex',
-          height: '100vh',
+          flexDirection: isMobile ? 'column' : 'row',
+          minHeight: '100vh',
+          height: isMobile ? 'auto' : '100vh',
           background:
             'radial-gradient(circle at top, #0f172a 0, #020617 55%, #000000 100%)',
           color: '#e5e7eb',
@@ -214,10 +234,11 @@ const Home = () => {
         {/* Left sidebar styled like player panel */}
         <div
           style={{
-            width: '270px',
+            width: isMobile ? '100%' : '270px',
             background:
               'linear-gradient(180deg, #020617 0%, #020617 40%, #020617 100%)',
-            borderRight: '1px solid #1f2937',
+            borderRight: isMobile ? 'none' : '1px solid #1f2937',
+            borderBottom: isMobile ? '1px solid #1f2937' : 'none',
             boxShadow: '8px 0 25px rgba(0,0,0,0.6)',
             display: 'flex',
             flexDirection: 'column',
@@ -599,6 +620,7 @@ const Home = () => {
                       textTransform: 'uppercase',
                       textShadow:
                         '0 0 14px rgba(249,115,22,0.95), 0 0 32px rgba(14,165,233,0.9)',
+                      animation: 'outroGlitch 1.2s ease-out',
                     }}
                   >
                     Super Tic-Tac-Toe
@@ -629,7 +651,7 @@ const Home = () => {
             {/* Leaderboard column next to the board */}
             <div
               style={{
-                width: '260px',
+                width: isMobile ? '100%' : '260px',
                 alignSelf: 'stretch',
                 background: 'rgba(15,23,42,0.95)',
                 borderRadius: '14px',
@@ -638,6 +660,7 @@ const Home = () => {
                 boxShadow: '0 0 20px rgba(56,189,248,0.7)',
                 color: '#e5e7eb',
                 fontFamily: '"Rajdhani", system-ui',
+                marginTop: isMobile ? '1.25rem' : 0,
               }}
             >
               <div
@@ -700,6 +723,51 @@ const Home = () => {
   // Default: show the neon arcade dashboard with game cards + leaderboard
   return (
     <div style={containerStyle}>
+      {showHomeIntro && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background:
+              'radial-gradient(circle at center, rgba(15,23,42,0.12), rgba(15,23,42,0.98))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 999,
+            pointerEvents: 'none',
+            animation: 'fadeOutIntro 1.6s ease-out forwards',
+          }}
+        >
+          <div
+            style={{
+              textAlign: 'center',
+              fontFamily: '"Press Start 2P", system-ui',
+              fontSize: '1.1rem',
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: '#f9fafb',
+              textShadow:
+                '0 0 14px rgba(56,189,248,0.95), 0 0 36px rgba(249,115,22,0.9)',
+              animation: 'outroGlitch 1.2s ease-out',
+            }}
+          >
+            4Games Arcade
+            <div
+              style={{
+                marginTop: '0.9rem',
+                fontSize: '0.7rem',
+                fontFamily: '"Rajdhani", system-ui',
+                letterSpacing: '0.09em',
+                textTransform: 'uppercase',
+                color: '#e5e7eb',
+              }}
+            >
+              Choose a game to press start
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
         <div style={{ ...headerStyle, textAlign: 'center' }}>
           <h1 style={welcomeStyle}>Welcome, {user.username}!</h1>

@@ -14,6 +14,17 @@ const Signup = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    // Client-side password policy: at least 8 chars,
+    // must include letters and at least one number or symbol
+    const hasMinimumLength = password.length >= 8;
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNonLetter = /[^A-Za-z]/.test(password);
+
+    if (!hasMinimumLength || !hasLetter || !hasNonLetter) {
+      setError('Password must be 8+ characters with letters and a number or symbol.');
+      return;
+    }
     try {
       const response = await axios.post('/api/signup', { username, password });
       
@@ -22,6 +33,8 @@ const Signup = () => {
         username: response.data.username,
         token: response.data.token
       }));
+      // Trigger home intro only on fresh signup
+      localStorage.setItem('showHomeIntro', 'true');
       
       setSuccess('Signup successful! Redirecting to home...');
       setUsername('');
@@ -44,7 +57,7 @@ const Signup = () => {
     <div className="auth-container">
       <div className="auth-form-wrapper">
         <h2 className="auth-title">Sign Up</h2>
-        <form onSubmit={handleSignup} className="auth-form">
+        <form onSubmit={handleSignup} className="auth-form" autoComplete="off">
           <div className="input-group">
             <label htmlFor="username">Username</label>
             <input
@@ -54,6 +67,7 @@ const Signup = () => {
               placeholder="Choose a username"
               value={username}
               onChange={e => setUsername(e.target.value)}
+              autoComplete="off"
               required
             />
           </div>
@@ -67,6 +81,7 @@ const Signup = () => {
                 placeholder="Create a password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                autoComplete="off"
                 required
               />
               <button
