@@ -16,7 +16,7 @@ const cardImages=[
 
 const audioelement = new Audio (cutesong);
 
-function Memorygame() {
+function Memorygame({ onBack }) {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [cards, setCards] = useState([]);
@@ -109,9 +109,26 @@ function Memorygame() {
                 date: new Date().toLocaleString(),
             };
             setBoardleader((prev) => {
-                const updated = [...prev, newEntry]
+                // Merge by username: keep only the best (lowest turns) per player
+                const existingIndex = prev.findIndex(
+                    (entry) => entry.username === newEntry.username,
+                );
+
+                let merged = [...prev];
+                if (existingIndex === -1) {
+                    // New player, just add
+                    merged.push(newEntry);
+                } else {
+                    // Existing player: keep the better score (lower turns)
+                    const existing = merged[existingIndex];
+                    if (newEntry.turns < existing.turns) {
+                        merged[existingIndex] = newEntry;
+                    }
+                }
+
+                const updated = merged
                     .sort((a, b) => a.turns - b.turns)
-                    .slice(0, 10);
+                    .slice(0, 8);
                 localStorage.setItem("mgleaderboard", JSON.stringify(updated));
                 return updated;
             });
@@ -167,7 +184,12 @@ function Memorygame() {
                             ))
                         )}
                     </div>
-                    <button className='homebutton' onClick={() => navigate('/home')}> Go Back to Home </button>
+                    <button
+                        className='homebutton'
+                        onClick={() => (onBack ? onBack() : navigate('/home'))}
+                    >
+                        Go Back to Home
+                    </button>
                 </div>
 
                 <div className='main'>
@@ -180,6 +202,27 @@ function Memorygame() {
     if(startGame){
         return(
             <div className='contain'>
+                {/* Win screen overlay */}
+                {isWon && (
+                    <div className='winscreen'>
+                        <div className='winscreen-content'>
+                            <h1>🎉 You Win! 🎉</h1>
+                            <p>You matched all the pairs in <strong>{turns}</strong> turns!</p>
+                            <div className='winscreen-buttons'>
+                                <button className='playagain-btn' onClick={() => {
+                                    setIsWon(false);
+                                    shuffleCards();
+                                }}>
+                                    Play Again
+                                </button>
+                                <button className='gohome-btn' onClick={() => (onBack ? onBack() : navigate('/home'))}>
+                                    Go Home
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className='top'>
                     <h2> Super cutesy memory game!</h2>
                     <p> to test your super cutesy memory!</p>
@@ -208,7 +251,12 @@ function Memorygame() {
                             ))
                         )}
                     </div>
-                    <button className='homebutton' onClick={() => navigate('/home')}> Go Back to Home </button>
+                    <button
+                        className='homebutton'
+                        onClick={() => (onBack ? onBack() : navigate('/home'))}
+                    >
+                        Go Back to Home
+                    </button>
                 </div>
 
                 <div className='game'>

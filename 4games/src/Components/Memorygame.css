@@ -95,6 +95,18 @@
 
 }
 
+.resetleaderboard{
+    font-family: 'Press Start 2p', system-ui;
+    font-size: 10px;
+    width: 200px;
+    height: 40px;
+    margin-top: 1rem;
+    background:rgb(240, 80, 216);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
 .boardleader{
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
@@ -159,6 +171,83 @@
 .flipped .back{
     transform: rotateY(90deg);
     transition-delay: 0s;
+}
+
+/* Win screen overlay */
+.winscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(23, 8, 136, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeInWin 0.5s ease-out;
+}
+
+@keyframes fadeInWin {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.winscreen-content {
+    text-align: center;
+    font-family: 'Press Start 2p', system-ui;
+    color: #fff;
+    padding: 2rem 3rem;
+    background: linear-gradient(135deg, rgb(240, 80, 216), #772f6d);
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgb(240, 80, 216), 0 0 80px rgba(119, 47, 109, 0.8);
+}
+
+.winscreen-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px #fff;
+}
+
+.winscreen-content p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.winscreen-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.playagain-btn,
+.gohome-btn {
+    font-family: 'Press Start 2p', system-ui;
+    font-size: 10px;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.playagain-btn {
+    background: rgb(240, 80, 216);
+    color: #fff;
+}
+
+.gohome-btn {
+    background: #772f6d;
+    color: #fff;
+}
+
+.playagain-btn:hover,
+.gohome-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgb(240, 80, 216);
 }
 
 

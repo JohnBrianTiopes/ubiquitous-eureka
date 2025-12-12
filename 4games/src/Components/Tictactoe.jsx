@@ -102,10 +102,22 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
         setBoards(newBoards);
         setBigWinners(newBigWinners);
 
-        const superWinner = newBigWinner || winner3x3(newBigWinners);
-        const superDraw =
-            !superWinner &&
-            newBigWinners.every((w, i) => w || isFull3x3(newBoards[i].cells));
+        let superWinner = newBigWinner || winner3x3(newBigWinners);
+        const allBoardsSettled = newBigWinners.every((w, i) => w || isFull3x3(newBoards[i].cells));
+        
+        // If no 3-in-a-row winner but all boards are settled, count boards
+        if (!superWinner && allBoardsSettled) {
+            const xBoards = newBigWinners.filter((w) => w === 'X').length;
+            const oBoards = newBigWinners.filter((w) => w === 'O').length;
+            if (xBoards > oBoards) {
+                superWinner = 'X';
+            } else if (oBoards > xBoards) {
+                superWinner = 'O';
+            }
+            // If equal, it stays as a draw (superWinner remains null)
+        }
+
+        const superDraw = !superWinner && allBoardsSettled;
 
         if (superWinner) {
             // trigger stylish outro for wins
@@ -129,33 +141,8 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 // Player beats the bot: increase streak and difficulty, then auto-reset board
                 setStreak((prev) => {
                     const next = prev + 1;
-                    setBestStreak((best) => {
-                        const updated = next > best ? next : best;
-
-                        // Save best streak per logged-in user to backend
-                        try {
-                            const storedUser = localStorage.getItem('user');
-                            if (storedUser) {
-                                const parsed = JSON.parse(storedUser);
-                                if (parsed && parsed.token) {
-                                    fetch('http://localhost:5000/api/leaderboard/update', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            Authorization: `Bearer ${parsed.token}`,
-                                        },
-                                        body: JSON.stringify({ bestStreak: updated }),
-                                    }).catch(() => {
-                                        // fail silently; UI still works even if leaderboard update fails
-                                    });
-                                }
-                            }
-                        } catch (e) {
-                            // ignore JSON / fetch errors for now
-                        }
-
-                        return updated;
-                    });
+                    // Update bestStreak synchronously so it's available when bot wins later
+                    setBestStreak((best) => Math.max(next, best));
                     setDifficulty((cur) => Math.min(5, cur + 1));
                     return next;
                 });
@@ -170,12 +157,42 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
             }
             if (vsAI && superWinner === 'O') {
                 // Bot wins: freeze board, show leaderboard, reset streak/difficulty
+                // Get the best streak - use functional update to ensure we have latest value
+                // Also consider current streak in case bestStreak hasn't updated yet
+                setStreak((currentStreak) => {
+                    setBestStreak((currentBestStreak) => {
+                        const finalBest = Math.max(currentBestStreak, currentStreak);
+                        if (finalBest > 0) {
+                            try {
+                                const storedUser = localStorage.getItem('user');
+                                if (storedUser) {
+                                    const parsed = JSON.parse(storedUser);
+                                    if (parsed && parsed.token) {
+                                        fetch('http://localhost:5000/api/leaderboard/update', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer ${parsed.token}`,
+                                            },
+                                            body: JSON.stringify({ bestStreak: finalBest }),
+                                        }).catch(() => {
+                                            // fail silently
+                                        });
+                                    }
+                                }
+                            } catch (e) {
+                                // ignore
+                            }
+                        }
+                        return finalBest;
+                    });
+                    return 0; // reset streak
+                });
                 setShowLeaderboard(true);
-                setStreak(0);
                 setDifficulty(1);
             }
         } else if (superDraw) {
-            // stylish outro for draws
+            // stylish outro for draws - also record streak since game ended
             setOutroMessage('Draw Game!');
             setShowOutro(true);
             setTimeout(() => setShowOutro(false), 2600);
@@ -184,6 +201,37 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 ...prev,
                 draws: prev.draws + 1,
             }));
+
+            // Record streak on draw as well (game ended without continuing)
+            if (vsAI) {
+                setStreak((currentStreak) => {
+                    setBestStreak((currentBestStreak) => {
+                        const finalBest = Math.max(currentBestStreak, currentStreak);
+                        if (finalBest > 0) {
+                            try {
+                                const storedUser = localStorage.getItem('user');
+                                if (storedUser) {
+                                    const parsed = JSON.parse(storedUser);
+                                    if (parsed && parsed.token) {
+                                        fetch('http://localhost:5000/api/leaderboard/update', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer ${parsed.token}`,
+                                            },
+                                            body: JSON.stringify({ bestStreak: finalBest }),
+                                        }).catch(() => {});
+                                    }
+                                }
+                            } catch (e) {}
+                        }
+                        return finalBest;
+                    });
+                    return 0;
+                });
+                setShowLeaderboard(true);
+                setDifficulty(1);
+            }
         }
     };
 
@@ -364,9 +412,10 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 : `Next: ${xIsNext ? 'X' : 'O'} • Must play in small board #${forcedBoard + 1} (if available)`;
 
     const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 800;
-    const containerBoardWidth = Math.min(viewportWidth * 0.7, 480);
-    const smallBoardSize = containerBoardWidth / 3 - 6;
-    const cellSize = Math.floor(smallBoardSize / 3) - 4;
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 600;
+    const containerBoardWidth = Math.min(viewportWidth * 0.4, viewportHeight * 0.62, 520);
+    const smallBoardSize = containerBoardWidth / 3 - 4;
+    const cellSize = Math.floor(smallBoardSize / 3) - 3;
 
     const bigBoardStyle = {
         display: 'grid',
@@ -459,19 +508,19 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
                 maxHeight: '100%',
                 overflow: 'visible',
                 width: '100%',
-                maxWidth: '900px',
+                maxWidth: '100%',
                 margin: '0 auto',
-                padding: '0.75rem 0.5rem',
+                padding: '0.25rem 0.5rem',
             }}
         >
-            <div style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>{status}</div>
-            <div style={{ marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+            <div style={{ fontSize: '0.95rem', marginBottom: '0.15rem' }}>{status}</div>
+            <div style={{ marginBottom: '0.1rem', fontSize: '0.85rem' }}>
                 Mode: {vsAI ? 'Player (X) vs AI (O)' : 'Two Players (X vs O)'}
             </div>
-            <div style={{ marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+            <div style={{ marginBottom: '0.1rem', fontSize: '0.85rem' }}>
                 Super Board — X Wins: {scoreboard.X} • O Wins: {scoreboard.O} • Draws: {scoreboard.draws}
             </div>
-            <div style={{ marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+            <div style={{ marginBottom: '0.35rem', fontSize: '0.85rem' }}>
                 Difficulty: {difficulty} | Current Streak vs Bot: {streak} | Best Streak: {bestStreak}
             </div>
 
@@ -651,7 +700,7 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
 };
 
 // Full-page arcade shell that wraps the core game
-const Tictactoe = () => {
+const Tictactoe = ({ onBack }) => {
     const [user, setUser] = useState(null);
     const [ticTacToeIntro, setTicTacToeIntro] = useState(true);
     const [ticTacToeControls, setTicTacToeControls] = useState({ resetGame: null, resetAll: null });
@@ -711,12 +760,17 @@ const Tictactoe = () => {
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',
                 minHeight: '100vh',
-                height: isMobile ? 'auto' : '100vh',
+                width: '100vw',
+                height: '100vh',
+                position: 'fixed',
+                top: 0,
+                left: 0,
                 background:
                     'radial-gradient(circle at top, #0f172a 0, #020617 55%, #000000 100%)',
                 color: '#e5e7eb',
                 fontFamily:
                     '"Rajdhani", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                overflow: 'hidden',
             }}
         >
             {/* Left sidebar styled like player panel */}
@@ -1003,7 +1057,7 @@ const Tictactoe = () => {
                 >
                     <button
                         type="button"
-                        onClick={() => navigate('/home')}
+                        onClick={() => (onBack ? onBack() : navigate('/home'))}
                         style={{
                             width: '100%',
                             padding: '7px 10px',
@@ -1056,9 +1110,9 @@ const Tictactoe = () => {
                     style={{
                         flex: 1,
                         display: 'flex',
-                        alignItems: 'stretch',
+                        alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '1.5rem',
+                        padding: '0.75rem 1.5rem',
                         gap: '1.5rem',
                     }}
                 >
@@ -1066,14 +1120,16 @@ const Tictactoe = () => {
                     <div
                         style={{
                             position: 'relative',
+                            flex: '1 1 auto',
+                            maxWidth: '650px',
                             background:
                                 'radial-gradient(circle at center, #020617 0, #020617 55%, #000000 100%)',
                             borderRadius: '18px',
-                            padding: '1.5rem 1.75rem 1.4rem',
+                            padding: '1rem 1.25rem 1rem',
                             border: '3px solid #f97316',
                             boxShadow:
                                 '0 0 25px rgba(249,115,22,0.9), 0 0 60px rgba(14,165,233,0.5)',
-                            maxHeight: '90vh',
+                            maxHeight: '88vh',
                             display: 'flex',
                             flexDirection: 'column',
                             overflow: 'hidden',
@@ -1139,12 +1195,13 @@ const Tictactoe = () => {
                     {/* Leaderboard column next to the board */}
                     <div
                         style={{
-                            width: isMobile ? '100%' : '260px',
+                            width: isMobile ? '100%' : '300px',
+                            minWidth: isMobile ? 'auto' : '260px',
                             alignSelf: 'stretch',
                             background: 'rgba(15,23,42,0.95)',
                             borderRadius: '14px',
                             border: '1px solid rgba(56,189,248,0.7)',
-                            padding: '1rem 1.1rem',
+                            padding: '1.25rem 1.25rem',
                             boxShadow: '0 0 20px rgba(56,189,248,0.7)',
                             color: '#e5e7eb',
                             fontFamily: '"Rajdhani", system-ui',
