@@ -11,8 +11,6 @@ const shuffleArray = (array) => {
   return newArr;
 };
 
-
-
 const multipleChoiceQuestions = {
   anatomy: [
     { question: "What is the largest organ in the human body?", options: ["Heart", "Skin", "Liver", "Lungs"], answer: "Skin" },
@@ -300,8 +298,9 @@ const identificationQuestions = {
 };
 
 
-const QuizGame = () => {
+const QuizGame = ({ onBack }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [stage, setStage] = useState("front");
   const [gameMode, setGameMode] = useState(null); 
   const [category, setCategory] = useState(null);
@@ -317,10 +316,27 @@ const QuizGame = () => {
     return saved ? JSON.parse(saved) : defaultLeaderboards;
   });
 
+  const [overallLeaderboard, setOverallLeaderboard] = useState(() => {
+    const saved = localStorage.getItem("quizOverallLeaderboard");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintsRemaining, setHintsRemaining] = useState(3);
+
+  // Load current user from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    } catch {
+      setUser(null);
+    }
+  }, []);
 
   
   const getTimerDuration = useCallback(() => {
@@ -437,15 +453,59 @@ const QuizGame = () => {
       setCurrentQuestion(currentQuestion + 1);
     } else {
      
-      const newEntry = { category, gameMode, score, date: new Date().toLocaleString() };
+      const newEntry = { 
+        username: user?.username || 'Anonymous',
+        category, 
+        gameMode, 
+        score, 
+        date: new Date().toLocaleString() 
+      };
       const currentLeaderboard = leaderboards[gameMode] || [];
-      const updatedLeaderboard = [...currentLeaderboard, newEntry]
+      const existingUserIndex = currentLeaderboard.findIndex(e => e.username === newEntry.username);
+      
+      let updatedLeaderboard;
+      if (existingUserIndex >= 0) {
+        // User exists - only update if new score is higher
+        if (score > currentLeaderboard[existingUserIndex].score) {
+          updatedLeaderboard = currentLeaderboard.map((entry, idx) =>
+            idx === existingUserIndex ? newEntry : entry
+          );
+        } else {
+          updatedLeaderboard = currentLeaderboard;
+        }
+      } else {
+        // New user - add to leaderboard
+        updatedLeaderboard = [...currentLeaderboard, newEntry];
+      }
+      
+      updatedLeaderboard = updatedLeaderboard
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
       
       const newLeaderboards = { ...leaderboards, [gameMode]: updatedLeaderboard };
       setLeaderboards(newLeaderboards);
       localStorage.setItem("quizLeaderboards", JSON.stringify(newLeaderboards));
+      
+      // Update overall leaderboard (cumulative points per user)
+      const username = user?.username || 'Anonymous';
+      setOverallLeaderboard(prevOverall => {
+        const existingIndex = prevOverall.findIndex(entry => entry.username === username);
+        let updatedOverall;
+        
+        if (existingIndex >= 0) {
+          updatedOverall = prevOverall.map((entry, idx) => 
+            idx === existingIndex 
+              ? { ...entry, totalPoints: entry.totalPoints + score, gamesPlayed: entry.gamesPlayed + 1 }
+              : entry
+          );
+        } else {
+          updatedOverall = [...prevOverall, { username, totalPoints: score, gamesPlayed: 1 }];
+        }
+        
+        updatedOverall = updatedOverall.sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 10);
+        localStorage.setItem("quizOverallLeaderboard", JSON.stringify(updatedOverall));
+        return updatedOverall;
+      });
       
       setStage("results");
     }
@@ -486,9 +546,9 @@ const QuizGame = () => {
             </div>
           </div>
 
-          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 MULTIPLE CHOICE LEADERBOARD</h3>{(leaderboards.multiple || []).length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : leaderboards.multiple.map((entry, i) => (<div key={i} className="leaderboard-item"><span>{i + 1}. {entry.category?.toUpperCase() || 'N/A'}</span><span>{entry.score} pts</span></div>))}</div></div>
+          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 QUIZ MASTERS</h3>{overallLeaderboard.length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : overallLeaderboard.map((entry, i) => (<div key={i} className="leaderboard-item"><span>{i + 1}. {entry.username}</span><span>{entry.totalPoints} pts</span></div>))}</div></div>
         </div>
-        <div className="footer"><button className="button button-home" onClick={() => navigate('/home')}>🏠 HOME</button><div className="version">QUIZ ARCADE v2.chate</div></div>
+        <div className="footer"><button className="button button-home" onClick={() => (onBack ? onBack() : navigate('/home'))}>🏠 HOME</button><div className="version">QUIZ ARCADE v2.chate</div></div>
       </div>
     );
   }
@@ -514,7 +574,7 @@ const QuizGame = () => {
             </div>
           </div>
         
-          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 {modeTitle.toUpperCase()} LEADERBOARD</h3>{(leaderboards[gameMode] || []).length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : leaderboards[gameMode].map((entry, i) => (<div key={i} className="leaderboard-item"><span>{i + 1}. {entry.category?.toUpperCase() || 'N/A'}</span><span>{entry.score} pts</span></div>))}</div></div>
+          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 {modeTitle.toUpperCase()} LEADERBOARD</h3>{(leaderboards[gameMode] || []).length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : leaderboards[gameMode].map((entry, i) => (<div key={i} className="leaderboard-item"><span>{i + 1}. {entry.username || 'Anonymous'}</span><span>{entry.score} pts</span></div>))}</div></div>
         </div>
         <div className="footer"><button className="button button-back" onClick={() => setStage("front")}>🏠 BACK TO MODES</button><div className="version">QUIZ ARCADE v2.chate</div></div>
       </div>
@@ -589,9 +649,9 @@ const QuizGame = () => {
               <div className="button-group"><button className="button button-play" onClick={resetGame}>🔄 PLAY AGAIN</button><button className="button button-back" onClick={resetGame}>🏠 GAME MODES</button></div>
             </div>
           </div> 
-          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 {modeTitle.toUpperCase()} LEADERBOARD</h3>{(leaderboards[gameMode] || []).length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : leaderboards[gameMode].map((entry, i) => (<div key={i} className={`leaderboard-item ${entry.category === category && entry.gameMode === gameMode && entry.score === score ? 'highlight' : ''}`}><span>{i + 1}. {entry.category?.toUpperCase() || 'N/A'}</span><span>{entry.score} pts</span></div>))}</div></div>
+          <div className="right-panel"><div className="leaderboard"><h3 className="leaderboard-title">🏆 {modeTitle.toUpperCase()} LEADERBOARD</h3>{(leaderboards[gameMode] || []).length === 0 ? <p className="empty-leaderboard-text">No scores yet. Be the first!</p> : leaderboards[gameMode].map((entry, i) => (<div key={i} className={`leaderboard-item ${entry.username === user?.username && entry.score === score ? 'highlight' : ''}`}><span>{i + 1}. {entry.username || 'Anonymous'}</span><span>{entry.score} pts</span></div>))}</div></div>
         </div>
-        <div className="footer"><button className="button button-home" onClick={() => navigate('/home')}>🏠 HOME</button><div className="version">QUIZ ARCADE v2.chate</div></div>
+        <div className="footer"><button className="button button-home" onClick={() => (onBack ? onBack() : navigate('/home'))}>🏠 HOME</button><div className="version">QUIZ ARCADE v2.chate</div></div>
       </div>
     );
   }
