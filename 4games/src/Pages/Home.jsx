@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Rockpaperscissor from '../Components/Rockpaperscissor.jsx';
+import Tictactoe from '../Components/Tictactoe.jsx';
+import Memorygame from '../Components/Memorygame.jsx';
+import Quizgame from '../Components/Quizgame.jsx';
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [showHomeIntro, setShowHomeIntro] = useState(false);
   const [funFact, setFunFact] = useState('');
+  const [activeGame, setActiveGame] = useState(null); // 'rps' | 'tictactoe' | 'memory' | 'quiz' | null
   const navigate = useNavigate();
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
@@ -27,8 +32,11 @@ const Home = () => {
     }
   }, []);
 
-  // Pick a random fun fact each time Home is visited
+  // Pick a random fun fact each time Home dashboard is shown
   useEffect(() => {
+    // Only pick a new fact when returning to the dashboard (activeGame is null)
+    if (activeGame !== null) return;
+    
     const facts = [
       'Your brain loves patterns – that is why Tic-Tac-Toe feels satisfying.',
       'Rock Paper Scissors has been played for hundreds of years.',
@@ -53,11 +61,12 @@ const Home = () => {
       'Pauleen stop asking for more money bruh',
       'Where tf did this nigga go? Yes I meant harold the lost nigger too',
       'Jan leigh said he got 5.2 inches',
+      'Did you not know that Chate is the prettiest?',
     ];
 
     const randomIndex = Math.floor(Math.random() * facts.length);
     setFunFact(facts[randomIndex]);
-  }, []);
+  }, [activeGame]);
 
   useEffect(() => {
     if (!showHomeIntro) return;
@@ -71,6 +80,23 @@ const Home = () => {
     localStorage.removeItem('user');
     navigate('/');
   };
+
+  // When a game is active, render it full-screen while staying on /home
+  if (user && activeGame === 'rockpaperscissor') {
+    return <Rockpaperscissor onBack={() => setActiveGame(null)} />;
+  }
+
+  if (user && activeGame === 'tictactoe') {
+    return <Tictactoe onBack={() => setActiveGame(null)} />;
+  }
+
+  if (user && activeGame === 'memory') {
+    return <Memorygame onBack={() => setActiveGame(null)} />;
+  }
+
+  if (user && activeGame === 'quiz') {
+    return <Quizgame onBack={() => setActiveGame(null)} />;
+  }
 
   if (!user) {
     return (
@@ -339,25 +365,25 @@ const Home = () => {
           title="Rock Paper Scissors"
           description="Classic game of chance. Choose your weapon wisely!"
           icon="✊✋✌️"
-          onClick={() => navigate('/rockpaperscissor')}
+          onClick={() => setActiveGame('rockpaperscissor')}
         />
         <GameCard
           title="Tic-Tac-Toe"
           description="Strategic gameplay. Can you outsmart the AI?"
           icon="⭕❌"
-          onClick={() => navigate('/tictactoe')}
+          onClick={() => setActiveGame('tictactoe')}
         />
         <GameCard
           title="Memory Game"
           description="Test your memory skills. Match all the pairs!"
           icon="🧠🎴"
-          onClick={() => navigate('/memorygame')}
+          onClick={() => setActiveGame('memory')}
         />
         <GameCard
           title="Quiz Game"
           description="Challenge your knowledge. How many questions can you answer?"
           icon="🧠❓"
-          onClick={() => navigate('/quizgame')}
+          onClick={() => setActiveGame('quiz')}
         />
       </div>
 

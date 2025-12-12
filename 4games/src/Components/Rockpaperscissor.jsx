@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Rockpaperscissor.css';
 
-const Rockpaperscissor = () => {
+const Rockpaperscissor = ({ onBack }) => {
     const navigate = useNavigate();
     
     const [gameState, setGameState] = useState('roundSelection');
@@ -751,7 +751,10 @@ const Rockpaperscissor = () => {
                             <button onClick={() => setGameState('leaderboard')} className="secondary-button">
                                 View Leaderboard
                             </button>
-                            <button onClick={() => navigate('/home')} className="secondary-button">
+                            <button
+                                onClick={() => (onBack ? onBack() : navigate('/home'))}
+                                className="secondary-button"
+                            >
                                 Back to Home
                             </button>
                         </div>
@@ -790,7 +793,10 @@ const Rockpaperscissor = () => {
                             <button onClick={backToRoundSelection} className="secondary-button">
                                 Change Round Limit
                             </button>
-                            <button onClick={() => navigate('/home')} className="secondary-button">
+                            <button
+                                onClick={() => (onBack ? onBack() : navigate('/home'))}
+                                className="secondary-button"
+                            >
                                 Back to Home
                             </button>
                         </div>
