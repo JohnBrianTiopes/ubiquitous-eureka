@@ -452,59 +452,65 @@ const QuizGame = ({ onBack }) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-     
-      const newEntry = { 
-        username: user?.username || 'Anonymous',
-        category, 
-        gameMode, 
-        score, 
-        date: new Date().toLocaleString() 
-      };
-      const currentLeaderboard = leaderboards[gameMode] || [];
-      const existingUserIndex = currentLeaderboard.findIndex(e => e.username === newEntry.username);
-      
-      let updatedLeaderboard;
-      if (existingUserIndex >= 0) {
-        // User exists - only update if new score is higher
-        if (score > currentLeaderboard[existingUserIndex].score) {
-          updatedLeaderboard = currentLeaderboard.map((entry, idx) =>
-            idx === existingUserIndex ? newEntry : entry
-          );
-        } else {
-          updatedLeaderboard = currentLeaderboard;
-        }
-      } else {
-        // New user - add to leaderboard
-        updatedLeaderboard = [...currentLeaderboard, newEntry];
-      }
-      
-      updatedLeaderboard = updatedLeaderboard
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 5);
-      
-      const newLeaderboards = { ...leaderboards, [gameMode]: updatedLeaderboard };
-      setLeaderboards(newLeaderboards);
-      localStorage.setItem("quizLeaderboards", JSON.stringify(newLeaderboards));
-      
-      // Update overall leaderboard (cumulative points per user)
-      const username = user?.username || 'Anonymous';
-      setOverallLeaderboard(prevOverall => {
-        const existingIndex = prevOverall.findIndex(entry => entry.username === username);
-        let updatedOverall;
+      // Use functional update to get the current score value
+      setScore(currentScore => {
+        const finalScore = currentScore;
         
-        if (existingIndex >= 0) {
-          updatedOverall = prevOverall.map((entry, idx) => 
-            idx === existingIndex 
-              ? { ...entry, totalPoints: entry.totalPoints + score, gamesPlayed: entry.gamesPlayed + 1 }
-              : entry
-          );
+        const newEntry = { 
+          username: user?.username || 'Anonymous',
+          category, 
+          gameMode, 
+          score: finalScore, 
+          date: new Date().toLocaleString() 
+        };
+        const currentLeaderboard = leaderboards[gameMode] || [];
+        const existingUserIndex = currentLeaderboard.findIndex(e => e.username === newEntry.username);
+        
+        let updatedLeaderboard;
+        if (existingUserIndex >= 0) {
+          // User exists - only update if new score is higher
+          if (finalScore > currentLeaderboard[existingUserIndex].score) {
+            updatedLeaderboard = currentLeaderboard.map((entry, idx) =>
+              idx === existingUserIndex ? newEntry : entry
+            );
+          } else {
+            updatedLeaderboard = currentLeaderboard;
+          }
         } else {
-          updatedOverall = [...prevOverall, { username, totalPoints: score, gamesPlayed: 1 }];
+          // New user - add to leaderboard
+          updatedLeaderboard = [...currentLeaderboard, newEntry];
         }
         
-        updatedOverall = updatedOverall.sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 10);
-        localStorage.setItem("quizOverallLeaderboard", JSON.stringify(updatedOverall));
-        return updatedOverall;
+        updatedLeaderboard = updatedLeaderboard
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5);
+        
+        const newLeaderboards = { ...leaderboards, [gameMode]: updatedLeaderboard };
+        setLeaderboards(newLeaderboards);
+        localStorage.setItem("quizLeaderboards", JSON.stringify(newLeaderboards));
+        
+        // Update overall leaderboard (cumulative points per user)
+        const username = user?.username || 'Anonymous';
+        setOverallLeaderboard(prevOverall => {
+          const existingIndex = prevOverall.findIndex(entry => entry.username === username);
+          let updatedOverall;
+          
+          if (existingIndex >= 0) {
+            updatedOverall = prevOverall.map((entry, idx) => 
+              idx === existingIndex 
+                ? { ...entry, totalPoints: entry.totalPoints + finalScore, gamesPlayed: entry.gamesPlayed + 1 }
+                : entry
+            );
+          } else {
+            updatedOverall = [...prevOverall, { username, totalPoints: finalScore, gamesPlayed: 1 }];
+          }
+          
+          updatedOverall = updatedOverall.sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 10);
+          localStorage.setItem("quizOverallLeaderboard", JSON.stringify(updatedOverall));
+          return updatedOverall;
+        });
+        
+        return currentScore; // Keep the score unchanged
       });
       
       setStage("results");

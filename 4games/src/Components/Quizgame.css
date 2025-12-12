@@ -623,27 +623,30 @@ html, body {
     border-right: none;
     border-left: none;
     border-top: 1px solid rgba(0, 255, 255, 0.2);
-    max-height: 40vh;
+    max-height: none;
+    padding: 0.8rem;
   }
 
   .center-content {
     order: -1;
     padding: 0.8rem;
+    min-height: auto;
   }
 
   .title {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
   }
 
   .question-title {
-    font-size: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 
   .option-button,
   .input-field,
   .button {
-    font-size: 0.6rem;
-    padding: 0.6rem;
+    font-size: 0.55rem;
+    padding: 0.5rem;
   }
 
   .boolean-options-container {
@@ -654,11 +657,65 @@ html, body {
   .boolean-option-button {
     width: 100%;
     max-width: 260px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .button-group {
     flex-wrap: wrap;
     row-gap: 0.6rem;
+  }
+
+  .game-mode-card, 
+  .category-card {
+    padding: 0.8rem;
+    margin: 0.2rem 0;
+  }
+
+  .category-icon {
+    font-size: 1.2rem;
+  }
+
+  .category-title {
+    font-size: 0.65rem;
+  }
+
+  .category-desc {
+    font-size: 0.45rem;
+  }
+
+  .leaderboard-title {
+    font-size: 0.65rem;
+  }
+
+  .leaderboard-item {
+    font-size: 0.45rem;
+    padding: 0.3rem;
+  }
+
+  .question-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 0.75rem;
+  }
+
+  .question-title {
+    font-size: 0.7rem;
+  }
+
+  .option-button {
+    font-size: 0.5rem;
+    padding: 0.4rem;
+  }
+
+  .category-title {
+    font-size: 0.55rem;
+  }
+
+  .category-desc {
+    font-size: 0.4rem;
   }
 }

@@ -413,7 +413,10 @@ const TictactoeGame = ({ onRegisterControls, onModeChange, onSetMode }) => {
 
     const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 800;
     const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 600;
-    const containerBoardWidth = Math.min(viewportWidth * 0.4, viewportHeight * 0.62, 520);
+    const isMobileBoard = viewportWidth <= 768;
+    const containerBoardWidth = isMobileBoard 
+        ? Math.min(viewportWidth * 0.9, 400)
+        : Math.min(viewportWidth * 0.4, viewportHeight * 0.62, 520);
     const smallBoardSize = containerBoardWidth / 3 - 4;
     const cellSize = Math.floor(smallBoardSize / 3) - 3;
 
@@ -761,16 +764,16 @@ const Tictactoe = ({ onBack }) => {
                 flexDirection: isMobile ? 'column' : 'row',
                 minHeight: '100vh',
                 width: '100vw',
-                height: '100vh',
-                position: 'fixed',
-                top: 0,
-                left: 0,
+                height: isMobile ? 'auto' : '100vh',
+                position: isMobile ? 'relative' : 'fixed',
+                top: isMobile ? 'auto' : 0,
+                left: isMobile ? 'auto' : 0,
                 background:
                     'radial-gradient(circle at top, #0f172a 0, #020617 55%, #000000 100%)',
                 color: '#e5e7eb',
                 fontFamily:
                     '"Rajdhani", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-                overflow: 'hidden',
+                overflow: isMobile ? 'auto' : 'hidden',
             }}
         >
             {/* Left sidebar styled like player panel */}
@@ -1080,7 +1083,7 @@ const Tictactoe = ({ onBack }) => {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    overflow: 'hidden',
+                    overflow: isMobile ? 'visible' : 'hidden',
                 }}
             >
                 {/* Top bar */}
@@ -1110,10 +1113,11 @@ const Tictactoe = ({ onBack }) => {
                     style={{
                         flex: 1,
                         display: 'flex',
+                        flexDirection: isMobile ? 'column' : 'row',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '0.75rem 1.5rem',
-                        gap: '1.5rem',
+                        padding: isMobile ? '0.5rem' : '0.75rem 1.5rem',
+                        gap: isMobile ? '1rem' : '1.5rem',
                     }}
                 >
                     {/* Board container */}
@@ -1121,18 +1125,19 @@ const Tictactoe = ({ onBack }) => {
                         style={{
                             position: 'relative',
                             flex: '1 1 auto',
-                            maxWidth: '650px',
+                            maxWidth: isMobile ? '100%' : '650px',
+                            width: isMobile ? '100%' : 'auto',
                             background:
                                 'radial-gradient(circle at center, #020617 0, #020617 55%, #000000 100%)',
                             borderRadius: '18px',
-                            padding: '1rem 1.25rem 1rem',
+                            padding: isMobile ? '0.75rem' : '1rem 1.25rem 1rem',
                             border: '3px solid #f97316',
                             boxShadow:
                                 '0 0 25px rgba(249,115,22,0.9), 0 0 60px rgba(14,165,233,0.5)',
-                            maxHeight: '88vh',
+                            maxHeight: isMobile ? 'none' : '88vh',
                             display: 'flex',
                             flexDirection: 'column',
-                            overflow: 'hidden',
+                            overflow: isMobile ? 'visible' : 'hidden',
                         }}
                     >
                         {/* Intro overlay fades in when game just opened */}

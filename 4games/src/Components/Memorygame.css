@@ -250,6 +250,190 @@
     box-shadow: 0 0 20px rgb(240, 80, 216);
 }
 
+/* Mobile Responsive Styles */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 25%;
+    padding: 0.8rem;
+  }
+
+  .game {
+    width: 50%;
+    left: 200px;
+  }
+
+  .startbutton {
+    margin-left: 15rem;
+    margin-top: 12rem;
+    font-size: 16px;
+    width: 250px;
+    height: 80px;
+  }
+
+  .card-grid {
+    grid-gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contain {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .top {
+    position: sticky;
+    top: 0;
+    padding: 0.6rem 1rem;
+    font-size: 10px;
+    z-index: 20;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 0.8rem;
+    border-left: none;
+    border-top: 1px solid rgba(82, 22, 121, 0.768);
+  }
+
+  .howto {
+    margin-top: 0.5rem;
+    font-size: 12px;
+    padding: 0.5rem;
+  }
+
+  .game {
+    position: relative;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding: 1rem;
+  }
+
+  .startbutton {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4rem;
+    display: block;
+    font-size: 14px;
+    width: 200px;
+    height: 70px;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
+
+  .homebutton,
+  .specialbutton,
+  .restart {
+    width: 100%;
+    max-width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+
+  .boardleader {
+    height: auto;
+    max-height: 200px;
+  }
+
+  .winscreen-content {
+    padding: 1.5rem 2rem;
+    margin: 1rem;
+  }
+
+  .winscreen-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .winscreen-content p {
+    font-size: 0.8rem;
+  }
+
+  .winscreen-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .top {
+    font-size: 8px;
+    padding: 0.5rem;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 8px;
+  }
+
+  .startbutton {
+    font-size: 12px;
+    width: 180px;
+    height: 60px;
+    margin-top: 5rem;
+  }
+
+  .homebutton,
+  .specialbutton,
+  .restart,
+  .resetleaderboard {
+    font-size: 8px;
+    width: 150px;
+    height: 40px;
+  }
+
+  .turns {
+    font-size: 10px;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .howto {
+    font-size: 10px;
+  }
+
+  .winscreen-content {
+    padding: 1rem 1.5rem;
+    width: 90%;
+    max-width: 300px;
+  }
+
+  .winscreen-content h1 {
+    font-size: 1.1rem;
+  }
+
+  .playagain-btn,
+  .gohome-btn {
+    font-size: 8px;
+    padding: 10px 15px;
+    width: 100%;
+  }
+
+  .top h2 {
+    font-size: 10px;
+  }
+
+  .top p {
+    font-size: 8px;
+  }
+
+  .boardleader-title {
+    font-size: 10px;
+  }
+
+  .boardleader span {
+    font-size: 9px;
+  }
+}
+
 
 
 

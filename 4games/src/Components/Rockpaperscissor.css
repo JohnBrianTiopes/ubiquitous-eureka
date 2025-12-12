@@ -434,3 +434,153 @@
     -moz-user-select: none; 
     -ms-user-select: none; 
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 10px;
+    }
+
+    .game-frame {
+        width: 95%;
+        padding: 20px 15px;
+        max-height: 85vh;
+    }
+
+    .game-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+        letter-spacing: 2px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .round-info {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .game-button {
+        padding: 12px 16px;
+        font-size: 12px;
+    }
+
+    .button-group {
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .score-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .score-box {
+        margin: 0;
+        padding: 8px 12px;
+    }
+
+    .choices-container {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .choices-container.five-choices {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .choice-button {
+        padding: 10px;
+    }
+
+    .emoji-icon {
+        font-size: 50px;
+        width: 70px;
+        height: 70px;
+    }
+
+    .back-button,
+    .secondary-button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .leaderboard-table {
+        font-size: 10px;
+    }
+
+    .table-cell {
+        padding: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-frame {
+        padding: 15px 10px;
+    }
+
+    .game-title {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .round-info {
+        font-size: 12px;
+    }
+
+    .game-button {
+        padding: 10px 14px;
+        font-size: 10px;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .choices-container {
+        gap: 10px;
+    }
+
+    .choices-container.five-choices {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .emoji-icon {
+        font-size: 40px;
+        width: 55px;
+        height: 55px;
+    }
+
+    .score-box h3 {
+        font-size: 12px;
+    }
+
+    .leaderboard-table {
+        font-size: 8px;
+    }
+
+    .table-cell {
+        padding: 4px 2px;
+    }
+
+    .table-cell.player {
+        padding-left: 5px;
+    }
+
+    .no-scores {
+        font-size: 14px;
+    }
+}

@@ -153,3 +153,66 @@ body {
   color: #ff9aa2;
   text-align: left;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .auth-form-wrapper {
+    width: 90%;
+    max-width: 400px;
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .auth-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .auth-btn {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .input-group label {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form-wrapper {
+    width: 95%;
+    padding: 1.2rem;
+    border-radius: 10px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .auth-input {
+    padding: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .auth-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+  }
+
+  .auth-link {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .password-toggle {
+    right: 8px;
+  }
+}

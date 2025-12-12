@@ -91,3 +91,56 @@ a {
   box-shadow: 0 0 20px #00e5ff, 0 0 40px #76ff03;
   transform: translateY(-3px);
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .ngilo-user {
+    height: auto;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .ngilo-user h1 {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .user-login {
+    width: 90%;
+    max-width: 350px;
+    height: auto;
+    padding: 20px;
+  }
+
+  .user-login > form > input {
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .user-btn {
+    height: 35px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ngilo-user h1 {
+    font-size: 22px;
+  }
+
+  .user-login {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .user-login > form > input {
+    height: 26px;
+    font-size: 9px;
+  }
+
+  .user-btn {
+    height: 32px;
+    font-size: 9px;
+    margin-top: 10px;
+  }
+}

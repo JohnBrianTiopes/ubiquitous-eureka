@@ -141,38 +141,49 @@ const Home = () => {
 
   const containerStyle = {
     minHeight: '100vh',
-    padding: isMobile ? '1.25rem 0.85rem' : '2rem',
+    padding: isMobile ? '1rem 0.75rem' : '2rem',
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Press Start 2P, cursive',
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    boxSizing: 'border-box',
   };
 
   const headerStyle = {
-    marginBottom: '2rem',
+    marginBottom: isMobile ? '1rem' : '2rem',
     animation: 'glow 2s ease-in-out infinite alternate',
+    width: '100%',
+    maxWidth: '1000px',
   };
 
   const welcomeStyle = {
-    fontSize: isMobile ? '1.8rem' : '2.5rem',
-    marginBottom: '1rem',
+    fontSize: isMobile ? '1.2rem' : '2.5rem',
+    marginBottom: isMobile ? '0.5rem' : '1rem',
     textShadow: '0 0 10px #0ff, 0 0 20px #0ff',
     color: '#fff',
+    wordBreak: 'break-word',
   };
 
   const subtitleStyle = {
-    fontSize: isMobile ? '0.85rem' : '1rem',
-    marginBottom: '2rem',
+    fontSize: isMobile ? '0.7rem' : '1rem',
+    marginBottom: isMobile ? '1rem' : '2rem',
     color: '#c5cae9',
   };
 
   const gameContainerStyle = {
     display: 'grid',
     gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))',
-    gap: '2rem',
+    gap: isMobile ? '1rem' : '2rem',
     maxWidth: '1000px',
-    margin: '0 auto 3rem',
+    width: '100%',
+    margin: '0 auto 2rem',
+    padding: isMobile ? '0' : '0 1rem',
+    boxSizing: 'border-box',
   };
 
   const leaderboardContainerStyle = {
@@ -205,35 +216,40 @@ const Home = () => {
     background: 'rgba(255, 255, 255, 0.1)',
     backdropFilter: 'blur(5px)',
     borderRadius: '15px',
-    padding: '2rem',
+    padding: isMobile ? '1rem' : '2rem',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     cursor: 'pointer',
     border: '1px solid rgba(255, 255, 255, 0.2)',
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
     position: 'relative',
     overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: isMobile ? '120px' : '180px',
   };
 
   const gameIconStyle = {
-    fontSize: '3rem',
-    marginBottom: '1rem',
+    fontSize: isMobile ? '1.8rem' : '3rem',
+    marginBottom: isMobile ? '0.5rem' : '1rem',
   };
 
   const gameTitleStyle = {
-    fontSize: '1rem',
+    fontSize: isMobile ? '0.65rem' : '1rem',
     marginBottom: '0.5rem',
     color: '#fff',
   };
 
   const gameDescStyle = {
-    fontSize: '0.7rem',
+    fontSize: isMobile ? '0.5rem' : '0.7rem',
     color: '#b0bec5',
     lineHeight: '1.4',
   };
 
   const logoutButtonStyle = {
-    padding: '12px 24px',
-    fontSize: '0.9rem',
+    padding: isMobile ? '6px 12px' : '12px 24px',
+    fontSize: isMobile ? '0.5rem' : '0.9rem',
     cursor: 'pointer',
     background: 'linear-gradient(145deg, #ff4d4d, #d32f2f)',
     color: 'white',
@@ -280,13 +296,14 @@ const Home = () => {
             zIndex: 999,
             pointerEvents: 'none',
             animation: 'fadeOutIntro 1.6s ease-out forwards',
+            padding: '1rem',
           }}
         >
           <div
             style={{
               textAlign: 'center',
               fontFamily: '"Press Start 2P", system-ui',
-              fontSize: '1.1rem',
+              fontSize: isMobile ? '0.8rem' : '1.1rem',
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               color: '#f9fafb',
@@ -299,7 +316,7 @@ const Home = () => {
             <div
               style={{
                 marginTop: '0.9rem',
-                fontSize: '0.7rem',
+                fontSize: isMobile ? '0.5rem' : '0.7rem',
                 fontFamily: '"Rajdhani", system-ui',
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
@@ -312,17 +329,41 @@ const Home = () => {
         </div>
       )}
 
-      <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
+      <div style={{ 
+        position: 'relative', 
+        marginBottom: isMobile ? '1rem' : '1.5rem',
+        width: '100%',
+        maxWidth: '1000px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <button
+          type="button"
+          onClick={handleLogout}
+          style={{
+            ...logoutButtonStyle,
+            position: isMobile ? 'relative' : 'absolute',
+            top: isMobile ? 'auto' : 0,
+            right: isMobile ? 'auto' : 0,
+            marginBottom: isMobile ? '1rem' : 0,
+            alignSelf: isMobile ? 'flex-end' : 'auto',
+          }}
+        >
+          Log Out
+        </button>
         <div style={{ ...headerStyle, textAlign: 'center' }}>
           <h1 style={welcomeStyle}>Welcome, {user.username}!</h1>
           <p style={subtitleStyle}>Choose a game to play:</p>
           {funFact && (
             <p
               style={{
-                fontSize: isMobile ? '0.85rem' : '1rem',
+                fontSize: isMobile ? '0.6rem' : '1rem',
                 marginTop: '0.25rem',
                 marginBottom: 0,
                 color: '#9ca3af',
+                padding: isMobile ? '0 0.5rem' : 0,
+                lineHeight: 1.5,
               }}
             >
               <span
@@ -346,18 +387,6 @@ const Home = () => {
             </p>
           )}
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          style={{
-            ...logoutButtonStyle,
-            position: 'absolute',
-            top: 0,
-            right: 0,
-          }}
-        >
-          Log Out
-        </button>
       </div>
 
       <div style={gameContainerStyle}>
