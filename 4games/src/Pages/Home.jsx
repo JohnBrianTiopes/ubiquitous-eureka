@@ -52,7 +52,6 @@ const Home = () => {
       'Cariaga the gyro master, like you know from jojo?',
       'Pauleen stop asking for more money bruh',
       'Where tf did this nigga go? Yes I meant harold the lost nigger too',
-      'Dev wants to 🍇 maam hannah, he said it himself not me',
       'Jan leigh said he got 5.2 inches',
     ];
 
